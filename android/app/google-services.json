@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "560110916722",
+    "project_id": "flutter-sku",
+    "storage_bucket": "flutter-sku.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560110916722:android:4fa4ba184e3788336c9eeb",
+        "android_client_info": {
+          "package_name": "com.example.sku_pramuka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "560110916722-006iv93o84q7uum9lm07gfkcq02jfo2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBI1IesLnyMJwU9PwPtVxacFXDE85E_aqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560110916722-006iv93o84q7uum9lm07gfkcq02jfo2l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
