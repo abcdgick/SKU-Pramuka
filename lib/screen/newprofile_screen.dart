@@ -66,97 +66,94 @@ class _NewProfileState extends State<NewProfile> {
       return const LoadingPage();
     } else {
       return Scaffold(
-          body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.black,
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                const Text(
-                  "Data Diri",
-                  style: TextStyle(
-                    fontSize: 35,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                textFormBiasa(const Icon(Icons.person, color: Colors.grey),
-                    "Nama", "Isikan nama anda", true, name),
-                const SizedBox(
-                  height: 20,
-                ),
-                textFormEmail(),
-                const SizedBox(
-                  height: 20,
-                ),
-                textFormPass(),
-                const SizedBox(
-                  height: 20,
-                ),
-                fieldDropDown(
-                    const Icon(
-                      Icons.school,
-                      color: Colors.grey,
-                    ),
-                    "Asal Sekolah",
-                    "Mohon pilih asal sekolah anda"),
-                const SizedBox(height: 20),
-                textFormTanggal(
-                    const Icon(
-                      Icons.event,
-                      color: Colors.grey,
-                    ),
-                    "Tanggal Lahir",
-                    "Mohon inputkan tanggal lahir anda",
-                    dateInput),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      textFormBiasa(
-                          const Icon(Icons.elderly, color: Colors.grey),
-                          "Tingkat",
-                          "Isikan tingkat anda",
-                          false,
-                          tingkatt),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      fieldDropDown2(const Icon(Icons.info, color: Colors.grey),
-                          "Kecakapan", "Isikan kecakapan anda")
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                radioBtnPil(),
-                const SizedBox(
-                  height: 40,
-                ),
-                colorButton(),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
+          appBar: AppBar(
+            backgroundColor: Colors.black87,
+            title: Text("Data Diri",
+                style: TextStyle(color: Colors.white, fontSize: 24)),
+            centerTitle: true,
           ),
-        ),
-      ));
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black,
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    textFormBiasa(const Icon(Icons.person, color: Colors.grey),
+                        "Nama", "Isikan nama anda", true, name),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    textFormEmail(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    textFormPass(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    fieldDropDown(
+                        const Icon(
+                          Icons.school,
+                          color: Colors.grey,
+                        ),
+                        "Asal Sekolah",
+                        "Mohon pilih asal sekolah anda"),
+                    const SizedBox(height: 20),
+                    textFormTanggal(
+                        const Icon(
+                          Icons.event,
+                          color: Colors.grey,
+                        ),
+                        "Tanggal Lahir",
+                        "Mohon inputkan tanggal lahir anda",
+                        dateInput),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 60,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          textFormBiasa(
+                              const Icon(Icons.elderly, color: Colors.grey),
+                              "Tingkat",
+                              "Isikan tingkat anda",
+                              false,
+                              tingkatt),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          fieldDropDown2(
+                              const Icon(Icons.info, color: Colors.grey),
+                              "Kecakapan",
+                              "Isikan kecakapan anda")
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    radioBtnPil(),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    colorButton(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ));
     }
   }
 
@@ -439,7 +436,7 @@ class _NewProfileState extends State<NewProfile> {
   Widget radioBtnPil() {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 60,
+      height: 70,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -546,6 +543,9 @@ class _NewProfileState extends State<NewProfile> {
     return InkWell(
       onTap: () async {
         if (_formKey.currentState!.validate()) {
+          setState(() {
+            _isLoading = true;
+          });
           try {
             User? user;
             if (!widget.logged) {
@@ -576,6 +576,7 @@ class _NewProfileState extends State<NewProfile> {
                 "umur": umur,
                 "tingkat": tingkatt.text,
                 "kecakapan": tingkat,
+                "pembina": "",
                 "gender": pil,
                 "profile": ""
               });
@@ -597,6 +598,9 @@ class _NewProfileState extends State<NewProfile> {
                 ),
               );
             }
+            setState(() {
+              _isLoading = false;
+            });
           } on FirebaseAuthException catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -608,7 +612,7 @@ class _NewProfileState extends State<NewProfile> {
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 100,
-        height: 60,
+        height: 70,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: const LinearGradient(colors: [

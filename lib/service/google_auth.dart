@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sku_pramuka/screen/newprofile_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthClass {
   GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -13,6 +14,7 @@ class AuthClass {
   );
 
   FirebaseAuth _auth = FirebaseAuth.instance;
+  final storage = new FlutterSecureStorage();
 
   Future<void> googleSignIn(BuildContext context) async {
     try {
@@ -27,6 +29,7 @@ class AuthClass {
         try {
           UserCredential userCredential =
               await _auth.signInWithCredential(credential);
+          storeCreds(userCredential);
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -47,6 +50,38 @@ class AuthClass {
     } catch (e) {
       final snackbar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+  }
+
+  Future<void> storeCreds(UserCredential userCredential) async {
+    await storage.write(
+        key: "token", value: userCredential.credential!.token.toString());
+    await storage.write(
+        key: "userCredential", value: userCredential.toString());
+    await storage.write(
+        key: "name", value: userCredential.user!.displayName.toString());
+  }
+
+  Future<String?> getToken() async {
+    return await storage.read(key: "token");
+  }
+
+  Future<String?> getUserCreds() async {
+    return await storage.read(key: "userCredential");
+  }
+
+  Future<String?> getName() async {
+    return await storage.read(key: "name");
+  }
+
+  Future<void> signOut({required BuildContext context}) async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+      await storage.delete(key: "token");
+    } catch (e) {
+      final snackBar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

@@ -130,7 +130,7 @@ class _SignUpState extends State<SignUp> {
       },
       child: SizedBox(
           width: MediaQuery.of(context).size.width - 60,
-          height: 60,
+          height: 70,
           child: Card(
             color: Colors.black,
             elevation: 8,
@@ -159,7 +159,7 @@ class _SignUpState extends State<SignUp> {
       Icon icon, String label, String empty, TextEditingController controller) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 55,
+      height: 60,
       child: TextFormField(
         cursorColor: Colors.white,
         onChanged: (value) => setState(() {}),
@@ -218,7 +218,7 @@ class _SignUpState extends State<SignUp> {
         r"{0,253}[a-zA-Z0-9])?)*$";
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 55,
+      height: 60,
       child: TextFormField(
         cursorColor: Colors.white,
         style: const TextStyle(color: Colors.white, fontSize: 17),
@@ -273,7 +273,7 @@ class _SignUpState extends State<SignUp> {
   Widget textFormPass() {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 55,
+      height: 60,
       child: TextFormField(
         cursorColor: Colors.white,
         style: const TextStyle(color: Colors.white, fontSize: 17),
@@ -341,7 +341,7 @@ class _SignUpState extends State<SignUp> {
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 100,
-        height: 60,
+        height: 70,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: const LinearGradient(colors: [

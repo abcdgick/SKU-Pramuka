@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
+import 'package:sku_pramuka/screen/tugas_screen.dart';
+import 'package:sku_pramuka/service/google_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,12 +20,32 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  AuthClass authClass = AuthClass();
+  Widget currentPage = SignIn();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkLogin();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Pramuka',
-      home: SignIn(),
+      home: currentPage,
     );
+  }
+
+  void checkLogin() async {
+    String? token = await authClass.getToken();
+    if (token != null) {
+      String? name = await authClass.getName();
+      setState(() {
+        currentPage = HomePage(name: name!);
+      });
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
+import 'package:sku_pramuka/service/google_auth.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -22,6 +23,7 @@ class _SignInState extends State<SignIn> {
   TextEditingController password = TextEditingController();
 
   FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthClass authClass = AuthClass();
 
   bool _passwordVisible = false;
   bool _isLoading = false;
@@ -125,30 +127,33 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget googleButton(String img, String name, double size) {
-    return SizedBox(
-        width: MediaQuery.of(context).size.width - 60,
-        height: 60,
-        child: Card(
-          color: Colors.black,
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: const BorderSide(width: 1, color: Colors.grey)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SvgPicture.asset(
-              img,
-              height: size,
-              width: size,
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            Text(
-              name,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ]),
-        ));
+    return InkWell(
+      onTap: () => authClass.googleSignIn(context),
+      child: SizedBox(
+          width: MediaQuery.of(context).size.width - 60,
+          height: 70,
+          child: Card(
+            color: Colors.black,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(width: 1, color: Colors.grey)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SvgPicture.asset(
+                img,
+                height: size,
+                width: size,
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Text(
+                name,
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ]),
+          )),
+    );
   }
 
   Widget textFormEmail() {
@@ -158,7 +163,7 @@ class _SignInState extends State<SignIn> {
         r"{0,253}[a-zA-Z0-9])?)*$";
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 55,
+      height: 60,
       child: TextFormField(
         cursorColor: Colors.white,
         style: const TextStyle(color: Colors.white, fontSize: 17),
@@ -213,7 +218,7 @@ class _SignInState extends State<SignIn> {
   Widget textFormPass() {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
-      height: 55,
+      height: 60,
       child: TextFormField(
         cursorColor: Colors.white,
         style: const TextStyle(color: Colors.white, fontSize: 17),
@@ -267,13 +272,14 @@ class _SignInState extends State<SignIn> {
   Widget colorButton() {
     return InkWell(
       onTap: () async {
+        setState(() {
+          _isLoading = true;
+        });
         try {
           UserCredential userCredential =
               await _auth.signInWithEmailAndPassword(
                   email: email.text, password: password.text);
-          setState(() {
-            _isLoading = false;
-          });
+
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -283,14 +289,14 @@ class _SignInState extends State<SignIn> {
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
-          setState(() {
-            _isLoading = false;
-          });
         }
+        setState(() {
+          _isLoading = false;
+        });
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 100,
-        height: 60,
+        height: 70,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(colors: [
