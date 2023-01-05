@@ -40,7 +40,7 @@ class _TugasPageState extends State<TugasPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Cari Yatim",
+                      "Menggapai Harapan Orang Tua",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -59,7 +59,7 @@ class _TugasPageState extends State<TugasPage> {
                       ],
                     ),
                     SizedBox(height: 25),
-                    label("Description"),
+                    label("Deskripsi"),
                     SizedBox(height: 12),
                     description(),
                     SizedBox(height: 25),
