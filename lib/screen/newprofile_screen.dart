@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
+import 'package:sku_pramuka/service/auth.dart';
 import 'package:time_machine/time_machine.dart';
 
 enum Pil { Laki, Perempuan }
@@ -26,12 +27,13 @@ class NewProfile extends StatefulWidget {
 }
 
 class _NewProfileState extends State<NewProfile> {
+  AuthClass authClass = AuthClass();
   final _formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController dateInput = TextEditingController();
-  TextEditingController tingkatt = TextEditingController();
+  TextEditingController tingkat = TextEditingController();
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -41,12 +43,12 @@ class _NewProfileState extends State<NewProfile> {
   String? selectedSekolah;
   String? formattedDate;
   DateTime? tl;
-  String tingkat = "None";
+  String kecakapan = "None";
   int umur = -1;
 
-  final lsiaga = <String>["Muda", "Bantu", "Tata"];
+  final lsiaga = <String>["Muda", "Bantu", "Tata", "Garuda"];
   final lpenggalang = <String>["Ramu", "Rakit", "Terap", "Garuda"];
-  final lpenegak = <String>["Tamu", "Bantara", "Laksana"];
+  final lpenegak = <String>["Tamu", "Bantara", "Laksana", "Garuda"];
 
   Pil? _pil = Pil.Laki;
 
@@ -57,7 +59,7 @@ class _NewProfileState extends State<NewProfile> {
     name.text = widget.name;
     email.text = widget.email;
     password.text = widget.pass;
-    tingkatt.text = tingkat;
+    tingkat.text = kecakapan;
   }
 
   @override
@@ -67,7 +69,7 @@ class _NewProfileState extends State<NewProfile> {
     } else {
       return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.black87,
+            backgroundColor: Color.fromARGB(255, 1, 101, 68),
             title: Text("Data Diri",
                 style: TextStyle(color: Colors.white, fontSize: 24)),
             centerTitle: true,
@@ -75,7 +77,7 @@ class _NewProfileState extends State<NewProfile> {
           body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: Colors.black,
+            color: Colors.white,
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -83,7 +85,7 @@ class _NewProfileState extends State<NewProfile> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
                     textFormBiasa(const Icon(Icons.person, color: Colors.grey),
                         "Nama", "Isikan nama anda", true, name),
@@ -124,10 +126,10 @@ class _NewProfileState extends State<NewProfile> {
                         children: [
                           textFormBiasa(
                               const Icon(Icons.elderly, color: Colors.grey),
-                              "Tingkat",
-                              "Isikan tingkat anda",
+                              "kecakapan",
+                              "Isikan kecakapan anda",
                               false,
-                              tingkatt),
+                              tingkat),
                           const SizedBox(
                             width: 20,
                           ),
@@ -143,7 +145,7 @@ class _NewProfileState extends State<NewProfile> {
                     ),
                     radioBtnPil(),
                     const SizedBox(
-                      height: 40,
+                      height: 30,
                     ),
                     colorButton(),
                     const SizedBox(
@@ -166,9 +168,9 @@ class _NewProfileState extends State<NewProfile> {
       height: 60,
       child: TextFormField(
         readOnly: !full,
-        cursorColor: Colors.white,
+        cursorColor: Colors.blue,
         onChanged: (value) => setState(() {}),
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         keyboardType: TextInputType.name,
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp("[a-zA-Z ]+"))
@@ -203,7 +205,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -228,8 +230,8 @@ class _NewProfileState extends State<NewProfile> {
       height: 60,
       child: TextFormField(
         readOnly: widget.logged,
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blue,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         keyboardType: TextInputType.emailAddress,
         //inputFormatters: [FilteringTextInputFormatter.allow(RegExp(pattern))],
         onChanged: (value) => setState(() {}),
@@ -261,7 +263,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -283,13 +285,14 @@ class _NewProfileState extends State<NewProfile> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blue,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         obscureText: !_passwordVisible,
         enableSuggestions: false,
         autocorrect: false,
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(
@@ -317,7 +320,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -345,9 +348,9 @@ class _NewProfileState extends State<NewProfile> {
           selectedSekolah = sekolah!;
         }),
         validator: (value) => value == null ? empty : null,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
-        dropdownColor: Colors.black87,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(
@@ -357,7 +360,7 @@ class _NewProfileState extends State<NewProfile> {
             ),
             prefixIcon: icon,
             labelText: label,
-            labelStyle: const TextStyle(color: Colors.white, fontSize: 17),
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
                   color: Colors.grey,
@@ -366,7 +369,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -378,35 +381,35 @@ class _NewProfileState extends State<NewProfile> {
     List<String> list;
     if (umur < 7) {
       list = ["None"];
-      tingkatt.text = "None";
+      tingkat.text = "None";
     } else if (umur < 11) {
       list = lsiaga;
-      tingkatt.text = "Siaga";
+      tingkat.text = "Siaga";
     } else if (umur < 16) {
       list = lpenggalang;
-      tingkatt.text = "Penggalang";
+      tingkat.text = "Penggalang";
     } else if (umur < 21) {
       list = lpenegak;
-      tingkatt.text = "Penegak";
+      tingkat.text = "Penegak";
     } else {
       list = ["None"];
     }
-    tingkat = list[0];
+    kecakapan = list[0];
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2 - 30,
       height: 60,
       child: DropdownButtonFormField<String>(
-        value: tingkat,
+        value: kecakapan,
         items: list.map((String value) {
           return DropdownMenuItem<String>(value: value, child: Text(value));
         }).toList(),
         onChanged: (value) => setState(() {
-          tingkat = value!;
+          kecakapan = value!;
         }),
         validator: (value) => value == null ? empty : null,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
-        dropdownColor: Colors.black87,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(
@@ -416,7 +419,7 @@ class _NewProfileState extends State<NewProfile> {
             ),
             prefixIcon: icon,
             labelText: label,
-            labelStyle: const TextStyle(color: Colors.white, fontSize: 17),
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
                   color: Colors.grey,
@@ -425,7 +428,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -446,10 +449,12 @@ class _NewProfileState extends State<NewProfile> {
             onChanged: (Pil? value) => setState(() {
               _pil = value;
             }),
-            fillColor: MaterialStateColor.resolveWith((states) => Colors.amber),
+            fillColor: MaterialStateColor.resolveWith(
+              (states) => Colors.teal,
+            ),
           ),
           const Text("Laki-laki",
-              style: TextStyle(color: Colors.white, fontSize: 17)),
+              style: TextStyle(color: Colors.black, fontSize: 17)),
           const SizedBox(
             width: 50,
           ),
@@ -459,10 +464,12 @@ class _NewProfileState extends State<NewProfile> {
             onChanged: (Pil? value) => setState(() {
               _pil = value;
             }),
-            fillColor: MaterialStateColor.resolveWith((states) => Colors.amber),
+            fillColor: MaterialStateColor.resolveWith(
+              (states) => Colors.teal,
+            ),
           ),
           const Text("Perempuan",
-              style: TextStyle(color: Colors.white, fontSize: 17)),
+              style: TextStyle(color: Colors.black, fontSize: 17)),
         ],
       ),
     );
@@ -476,7 +483,7 @@ class _NewProfileState extends State<NewProfile> {
       child: TextFormField(
         controller: controller,
         readOnly: true,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
+        style: const TextStyle(color: Colors.black, fontSize: 16),
         onTap: () async {
           DateTime? pickedDate = await showDatePicker(
               context: context,
@@ -494,8 +501,9 @@ class _NewProfileState extends State<NewProfile> {
             });
           }
         },
-        cursorColor: Colors.white,
+        cursorColor: Colors.blue,
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(
@@ -515,7 +523,7 @@ class _NewProfileState extends State<NewProfile> {
                     },
                     icon: const Icon(Icons.clear)),
             labelText: label,
-            labelStyle: const TextStyle(color: Colors.white),
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
                   color: Colors.grey,
@@ -524,7 +532,7 @@ class _NewProfileState extends State<NewProfile> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -546,68 +554,29 @@ class _NewProfileState extends State<NewProfile> {
           setState(() {
             _isLoading = true;
           });
-          try {
-            User? user;
-            if (!widget.logged) {
-              user = (await _auth.createUserWithEmailAndPassword(
-                      email: email.text, password: password.text))
-                  .user;
-              user!.updateDisplayName(name.text);
-            } else {
-              user = null;
-            }
-
-            if (user != null || widget.logged) {
-              String pil;
-              if (_pil.toString() == "Pil.Laki") {
-                pil = "Laki-Laki";
-              } else {
-                pil = "Perempuan";
-              }
-              await _firestore
-                  .collection('users')
-                  .doc(_auth.currentUser!.uid)
-                  .set({
-                "uid": _auth.currentUser!.uid,
-                "name": name.text,
-                "email": email.text,
-                "sekolah": selectedSekolah,
-                "tl": tl,
-                "umur": umur,
-                "tingkat": tingkatt.text,
-                "kecakapan": tingkat,
-                "pembina": "",
-                "gender": pil,
-                "profile": ""
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Welcome ${name.text}!"),
-                  backgroundColor: Colors.grey,
-                ),
-              );
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => HomePage(name: name.text)),
-                  (route) => false);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Pembuatan Akun Gagal"),
-                ),
-              );
-            }
-            setState(() {
-              _isLoading = false;
-            });
-          } on FirebaseAuthException catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(e.message!),
-              ),
-            );
+          String pil;
+          if (_pil.toString() == "Pil.Laki") {
+            pil = "Laki-Laki";
+          } else {
+            pil = "Perempuan";
           }
+          authClass
+              .emailSignUp(
+                context,
+                widget.logged,
+                name.text,
+                email.text,
+                password.text,
+                pil,
+                selectedSekolah!,
+                tl!,
+                umur,
+                tingkat.text,
+                kecakapan,
+              )
+              .then((value) => setState(() {
+                    _isLoading = false;
+                  }));
         }
       },
       child: Container(

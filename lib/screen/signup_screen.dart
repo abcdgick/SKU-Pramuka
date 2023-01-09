@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sku_pramuka/screen/newprofile_screen.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sku_pramuka/service/google_auth.dart';
+import 'package:sku_pramuka/service/auth.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -43,7 +43,7 @@ class _SignUpState extends State<SignUp> {
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: Colors.black,
+          color: Colors.white,
           child: Form(
             key: _formKey,
             child: Column(
@@ -53,7 +53,7 @@ class _SignUpState extends State<SignUp> {
                   "Buat Akun",
                   style: TextStyle(
                     fontSize: 35,
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -67,7 +67,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 const Text(
                   "Atau",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
                 const SizedBox(
                   height: 20,
@@ -93,7 +93,7 @@ class _SignUpState extends State<SignUp> {
                   const Text(
                     "Sudah Punya Akun? ",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 16,
                     ),
                   ),
@@ -108,7 +108,7 @@ class _SignUpState extends State<SignUp> {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
           width: MediaQuery.of(context).size.width - 60,
           height: 70,
           child: Card(
-            color: Colors.black,
+            color: Colors.white,
             elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -148,7 +148,7 @@ class _SignUpState extends State<SignUp> {
               ),
               Text(
                 name,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.black, fontSize: 18),
               ),
             ]),
           )),
@@ -161,9 +161,9 @@ class _SignUpState extends State<SignUp> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
+        cursorColor: Colors.blue,
         onChanged: (value) => setState(() {}),
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         keyboardType: TextInputType.name,
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp("[a-zA-Z ]+"))
@@ -196,7 +196,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -220,8 +220,8 @@ class _SignUpState extends State<SignUp> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blue,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         keyboardType: TextInputType.emailAddress,
         //inputFormatters: [FilteringTextInputFormatter.allow(RegExp(pattern))],
         onChanged: (value) => setState(() {}),
@@ -253,7 +253,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -275,13 +275,14 @@ class _SignUpState extends State<SignUp> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blue,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         obscureText: !_passwordVisible,
         enableSuggestions: false,
         autocorrect: false,
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(
@@ -309,7 +310,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),

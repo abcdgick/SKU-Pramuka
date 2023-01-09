@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
-import 'package:sku_pramuka/service/google_auth.dart';
+import 'package:sku_pramuka/service/auth.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -44,7 +44,7 @@ class _SignInState extends State<SignIn> {
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: Colors.black,
+          color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -52,7 +52,7 @@ class _SignInState extends State<SignIn> {
                 "Login",
                 style: TextStyle(
                   fontSize: 35,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -66,7 +66,7 @@ class _SignInState extends State<SignIn> {
               ),
               const Text(
                 "Atau",
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(color: Colors.black, fontSize: 18),
               ),
               const SizedBox(
                 height: 20,
@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn> {
                 const Text(
                   "Belum Punya Akun? ",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                   ),
                 ),
@@ -101,7 +101,7 @@ class _SignInState extends State<SignIn> {
                   child: const Text(
                     "Buat Akun",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -114,7 +114,7 @@ class _SignInState extends State<SignIn> {
               const Text(
                 "Lupa Password?",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -128,12 +128,19 @@ class _SignInState extends State<SignIn> {
 
   Widget googleButton(String img, String name, double size) {
     return InkWell(
-      onTap: () => authClass.googleSignIn(context),
+      onTap: () {
+        setState(() {
+          _isLoading = true;
+        });
+        authClass.googleSignIn(context).then((value) => setState(() {
+              _isLoading = false;
+            }));
+      },
       child: SizedBox(
           width: MediaQuery.of(context).size.width - 60,
           height: 70,
           child: Card(
-            color: Colors.black,
+            color: Colors.white,
             elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -149,7 +156,7 @@ class _SignInState extends State<SignIn> {
               ),
               Text(
                 name,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.black, fontSize: 18),
               ),
             ]),
           )),
@@ -165,8 +172,8 @@ class _SignInState extends State<SignIn> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blue,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         keyboardType: TextInputType.emailAddress,
         //inputFormatters: [FilteringTextInputFormatter.allow(RegExp(pattern))],
         onChanged: (value) => setState(() {}),
@@ -198,7 +205,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -220,13 +227,14 @@ class _SignInState extends State<SignIn> {
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: TextFormField(
-        cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 17),
+        cursorColor: Colors.blueAccent,
+        style: const TextStyle(color: Colors.black, fontSize: 17),
         obscureText: !_passwordVisible,
         enableSuggestions: false,
         autocorrect: false,
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: const BorderSide(
@@ -254,7 +262,7 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.circular(15)),
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: Colors.amber,
+                  color: Colors.deepOrange,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(15))),
@@ -275,24 +283,11 @@ class _SignInState extends State<SignIn> {
         setState(() {
           _isLoading = true;
         });
-        try {
-          UserCredential userCredential =
-              await _auth.signInWithEmailAndPassword(
-                  email: email.text, password: password.text);
-
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      HomePage(name: userCredential.user!.displayName!)),
-              (route) => false);
-        } catch (e) {
-          final snackbar = SnackBar(content: Text(e.toString()));
-          ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        }
-        setState(() {
-          _isLoading = false;
-        });
+        authClass
+            .emailSignIn(context, email.text, password.text)
+            .then((value) => setState(() {
+                  _isLoading = false;
+                }));
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 100,

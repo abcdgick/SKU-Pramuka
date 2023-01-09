@@ -15,7 +15,7 @@ class _TugasPageState extends State<TugasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black87,
+          backgroundColor: Color.fromARGB(255, 1, 101, 68),
           title: Text("Tugas",
               style: TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
@@ -24,8 +24,10 @@ class _TugasPageState extends State<TugasPage> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Color(0xff1d1e26), Color(0xff252041)])),
+              gradient: LinearGradient(colors: [
+            Color.fromARGB(255, 235, 244, 245),
+            Color.fromARGB(255, 181, 198, 224)
+          ])),
           child: SingleChildScrollView(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -43,7 +45,7 @@ class _TugasPageState extends State<TugasPage> {
                       "Menggapai Harapan Orang Tua",
                       style: TextStyle(
                         fontSize: 33,
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
@@ -94,7 +96,7 @@ class _TugasPageState extends State<TugasPage> {
     return Text(
       label,
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
           fontWeight: FontWeight.w600,
           fontSize: 16.5,
           letterSpacing: 0.2),
@@ -106,12 +108,12 @@ class _TugasPageState extends State<TugasPage> {
       height: 60,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: Color(0xff2a2e3d),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
         style: TextStyle(
-          color: Colors.grey,
+          color: Colors.black,
           fontSize: 17,
         ),
         decoration: InputDecoration(
@@ -135,12 +137,12 @@ class _TugasPageState extends State<TugasPage> {
       height: 150,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: Color(0xff2a2e3d),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
         style: TextStyle(
-          color: Colors.grey,
+          color: Colors.black,
           fontSize: 17,
         ),
         maxLines: null,

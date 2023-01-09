@@ -38,36 +38,45 @@ class CardTugas extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  color: Color(0xff2a2e3d),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 15),
-                      Container(
-                        height: 33,
-                        width: 36,
-                        decoration: BoxDecoration(
-                          color: iconBgColor,
-                          borderRadius: BorderRadius.circular(8),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  elevation: 5,
+                  //color: Color.fromARGB(255, 247, 211, 132),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 247, 211, 132),
+                      Color.fromARGB(255, 255, 225, 156),
+                    ])),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 15),
+                        Container(
+                          height: 33,
+                          width: 36,
+                          decoration: BoxDecoration(
+                            color: iconBgColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            iconData,
+                            color: iconColor,
+                          ),
                         ),
-                        child: Icon(
-                          iconData,
-                          color: iconColor,
+                        SizedBox(
+                          width: 20,
                         ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                              fontSize: 18,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                                fontSize: 18,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -75,7 +84,7 @@ class CardTugas extends StatelessWidget {
           ),
           Theme(
             data: ThemeData(
-                primarySwatch: Colors.blue,
+                primarySwatch: Colors.green,
                 unselectedWidgetColor: Color(0xff5e616a),
                 checkboxTheme: CheckboxThemeData(
                   fillColor: MaterialStateProperty.all(Color(0xff6cf8a9)),

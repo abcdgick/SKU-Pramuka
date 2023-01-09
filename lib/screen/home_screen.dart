@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
-import 'package:sku_pramuka/service/google_auth.dart';
+import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,12 +19,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Color.fromARGB(255, 1, 101, 68),
         title: Text(
           "SKU Pramuka",
           style: TextStyle(
@@ -33,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           CircleAvatar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.black,
           ),
           SizedBox(
             width: 25,
@@ -43,8 +46,9 @@ class _HomePageState extends State<HomePage> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-                padding: const EdgeInsets.only(left: 22),
-                child: Text("Senin, 23 Feb",
+                padding: const EdgeInsets.only(left: 22, bottom: 10),
+                child: Text(
+                    DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
@@ -89,17 +93,20 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.white,
         onTap: (value) {
-          logout(context);
-          authClass.signOut(context: context);
+          authClass.signOut(context);
+          authClass.signOutGoogle(context: context);
         },
+        currentIndex: 0,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: Color.fromARGB(255, 1, 101, 68),
         items: [
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               size: 32,
-              color: Colors.white,
             ),
             label: "Home",
           ),
@@ -126,34 +133,13 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.settings,
+              Icons.account_circle_rounded,
               size: 32,
-              color: Colors.white,
             ),
             label: "Settings",
           ),
         ],
       ),
     );
-  }
-
-  Future logout(BuildContext context) async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
-    try {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Datang Kembali!'),
-        ),
-      );
-      await _auth.signOut().then((value) => Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => const SignIn()))));
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message!),
-        ),
-      );
-    }
   }
 }
