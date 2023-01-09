@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "560110916722-qnuto68hpdg73b24dhsr9t4ta5k2vshe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sku_pramuka",
+            "certificate_hash": "592df256b2674a75d7904252d0095150ca9a9e82"
+          }
+        },
+        {
           "client_id": "560110916722-006iv93o84q7uum9lm07gfkcq02jfo2l.apps.googleusercontent.com",
           "client_type": 3
         }
