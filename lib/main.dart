@@ -36,7 +36,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pramuka',
-      home: HomePage(name: "Contoh"),
+      home: currentPage,
+      debugShowCheckedModeBanner: false,
     );
   }
 
@@ -45,7 +46,7 @@ class _MyAppState extends State<MyApp> {
     if (token != null) {
       String? name = await authClass.getName();
       setState(() {
-        currentPage = HomePage(name: name!);
+        currentPage = HomePage();
       });
     }
   }

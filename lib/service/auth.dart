@@ -31,7 +31,8 @@ class AuthClass {
       DateTime tl,
       int umur,
       String tingkat,
-      String kecakapan) async {
+      String kecakapan,
+      String agama) async {
     try {
       User? user;
       if (!logged) {
@@ -53,9 +54,9 @@ class AuthClass {
           "umur": umur,
           "tingkat": tingkat,
           "kecakapan": kecakapan,
-          "pembina": "",
           "gender": gender,
-          "profile": ""
+          "profile": "",
+          "agama": agama
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -64,7 +65,7 @@ class AuthClass {
         );
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (builder) => HomePage(name: name)),
+            MaterialPageRoute(builder: (builder) => HomePage()),
             (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,9 +104,7 @@ class AuthClass {
           if (query.docs.length != 0) {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        HomePage(name: userCredential.user!.displayName!)),
+                MaterialPageRoute(builder: (context) => HomePage()),
                 (route) => false);
           } else {
             Navigator.push(
@@ -140,9 +139,7 @@ class AuthClass {
 
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  HomePage(name: userCredential.user!.displayName!)),
+          MaterialPageRoute(builder: (context) => HomePage()),
           (route) => false);
     } catch (e) {
       final snackbar = SnackBar(content: Text(e.toString()));

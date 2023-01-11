@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -42,13 +43,28 @@ class _NewProfileState extends State<NewProfile> {
   bool _isLoading = false;
   String? selectedSekolah;
   String? formattedDate;
+  String? selectedKota;
+  String? selectedKecamatan;
+  String? selectedAgama;
+  String uidSekolah = "";
   DateTime? tl;
   String kecakapan = "None";
   int umur = -1;
+  Map<String, dynamic> kota = {};
+  List<String> listKota = [];
+  List<String> listKecamatan = [];
+  List<String> listSekolah = [];
+  List<String> listAgama = [
+    "Islam",
+    "Katolik",
+    "Prostestan",
+    "Hindu",
+    "Buddha"
+  ];
 
-  final lsiaga = <String>["Muda", "Bantu", "Tata", "Garuda"];
+  final lsiaga = <String>["Muda", "Bantu", "Tata"];
   final lpenggalang = <String>["Ramu", "Rakit", "Terap", "Garuda"];
-  final lpenegak = <String>["Tamu", "Bantara", "Laksana", "Garuda"];
+  final lpenegak = <String>["Tamu", "Bantara", "Laksana"];
 
   Pil? _pil = Pil.Laki;
 
@@ -60,6 +76,7 @@ class _NewProfileState extends State<NewProfile> {
     email.text = widget.email;
     password.text = widget.pass;
     tingkat.text = kecakapan;
+    init();
   }
 
   @override
@@ -68,95 +85,114 @@ class _NewProfileState extends State<NewProfile> {
       return const LoadingPage();
     } else {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 1, 101, 68),
-            title: Text("Data Diri",
-                style: TextStyle(color: Colors.white, fontSize: 24)),
-            centerTitle: true,
-          ),
-          body: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    textFormBiasa(const Icon(Icons.person, color: Colors.grey),
-                        "Nama", "Isikan nama anda", true, name),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    textFormEmail(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    textFormPass(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    fieldDropDown(
-                        const Icon(
-                          Icons.school,
-                          color: Colors.grey,
-                        ),
-                        "Asal Sekolah",
-                        "Mohon pilih asal sekolah anda"),
-                    const SizedBox(height: 20),
-                    textFormTanggal(
-                        const Icon(
-                          Icons.event,
-                          color: Colors.grey,
-                        ),
-                        "Tanggal Lahir",
-                        "Mohon inputkan tanggal lahir anda",
-                        dateInput),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 60,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          textFormBiasa(
-                              const Icon(Icons.elderly, color: Colors.grey),
-                              "kecakapan",
-                              "Isikan kecakapan anda",
-                              false,
-                              tingkat),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          fieldDropDown2(
-                              const Icon(Icons.info, color: Colors.grey),
-                              "Kecakapan",
-                              "Isikan kecakapan anda")
-                        ],
+        appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 78, 108, 80),
+          title: Text("Data Diri",
+              style: TextStyle(color: Colors.white, fontSize: 24)),
+          centerTitle: true,
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  textFormBiasa(const Icon(Icons.person, color: Colors.grey),
+                      "Nama", "Isikan nama anda", true, name),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  textFormEmail(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  textFormPass(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  fieldDropDownKota(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  fieldDropDownKecamatan(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  fieldDropDownSekolah(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  textFormTanggal(
+                      const Icon(
+                        Icons.event,
+                        color: Colors.grey,
                       ),
+                      "Tanggal Lahir",
+                      "Mohon inputkan tanggal lahir anda",
+                      dateInput),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 60,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        textFormBiasa(
+                            const Icon(Icons.elderly, color: Colors.grey),
+                            "Tingkat",
+                            "Isikan kecakapan anda",
+                            false,
+                            tingkat),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        fieldDropDownTingkat(
+                            const Icon(Icons.info, color: Colors.grey),
+                            "Kecakapan",
+                            "Isikan kecakapan anda")
+                      ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    radioBtnPil(),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    colorButton(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  fieldDropDownAgama(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  radioBtnPil(),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  colorButton(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
             ),
-          ));
+          ),
+        ),
+      );
     }
+  }
+
+  Future<void> init() async {
+    await _firestore.collection("kota").get().then((value) {
+      for (var doc in value.docs) {
+        kota[doc.id] = doc.data()["kecamatan"];
+        listKota.add(doc.id);
+      }
+    });
+    setState(() {});
   }
 
   Widget textFormBiasa(Icon icon, String label, String empty, bool full,
@@ -335,19 +371,29 @@ class _NewProfileState extends State<NewProfile> {
     );
   }
 
-  Widget fieldDropDown(Icon icon, String label, String empty) {
+  Widget fieldDropDownKota() {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 60,
       height: 60,
       child: DropdownButtonFormField<String>(
-        value: selectedSekolah,
-        items: <String>['SD', 'SMP', 'SMA'].map((String value) {
+        value: selectedKota,
+        items: listKota.map((String value) {
           return DropdownMenuItem<String>(value: value, child: Text(value));
         }).toList(),
-        onChanged: (sekolah) => setState(() {
-          selectedSekolah = sekolah!;
-        }),
-        validator: (value) => value == null ? empty : null,
+        onChanged: (value) {
+          setState(() {
+            selectedKota = value;
+            if (selectedKota != null) {
+              selectedKecamatan = null;
+              listKecamatan = (kota[selectedKota] as List)
+                  .map((item) => item as String)
+                  .toList();
+              selectedSekolah = null;
+              listSekolah = [];
+            }
+          });
+        },
+        validator: (value) => value == null ? "Mohon isikan kota anda" : null,
         style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
             filled: true,
@@ -358,8 +404,11 @@ class _NewProfileState extends State<NewProfile> {
                 width: 1,
               ),
             ),
-            prefixIcon: icon,
-            labelText: label,
+            prefixIcon: const Icon(
+              Icons.location_city,
+              color: Colors.grey,
+            ),
+            labelText: "Kota",
             labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
@@ -377,7 +426,110 @@ class _NewProfileState extends State<NewProfile> {
     );
   }
 
-  Widget fieldDropDown2(Icon icon, String label, String empty) {
+  Widget fieldDropDownKecamatan() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: DropdownButtonFormField<String>(
+        value: selectedKecamatan,
+        items: listKecamatan.map((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedKecamatan = value;
+            if (selectedKecamatan != null) {
+              selectedSekolah = null;
+              if (selectedKecamatan != null && selectedKota != null) {
+                getSekolah(selectedKota!, selectedKecamatan!);
+              }
+            }
+          });
+        },
+        validator: (value) =>
+            value == null ? "Mohon isikan kecamatan anda" : null,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: InputDecoration(
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            prefixIcon: const Icon(
+              Icons.location_on,
+              color: Colors.grey,
+            ),
+            labelText: "Kecamatan",
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(15)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(15))),
+      ),
+    );
+  }
+
+  Widget fieldDropDownSekolah() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: DropdownButtonFormField<String>(
+        value: selectedSekolah,
+        items: listSekolah.map((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedSekolah = value;
+            getSekolahUid(selectedKota!, selectedKecamatan!, selectedSekolah!);
+          });
+        },
+        validator: (value) =>
+            value == null ? "Mohon isikan sekolah anda" : null,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: InputDecoration(
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            prefixIcon: const Icon(
+              Icons.school,
+              color: Colors.grey,
+            ),
+            labelText: "Sekolah",
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(15)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(15))),
+      ),
+    );
+  }
+
+  Widget fieldDropDownTingkat(Icon icon, String label, String empty) {
     List<String> list;
     if (umur < 7) {
       list = ["None"];
@@ -419,6 +571,53 @@ class _NewProfileState extends State<NewProfile> {
             ),
             prefixIcon: icon,
             labelText: label,
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(15)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(15))),
+      ),
+    );
+  }
+
+  Widget fieldDropDownAgama() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: DropdownButtonFormField<String>(
+        value: selectedAgama,
+        items: listAgama.map((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedAgama = value;
+          });
+        },
+        validator: (value) => value == null ? "Mohon isikan agama anda" : null,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: InputDecoration(
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            prefixIcon: const Icon(
+              Icons.location_on,
+              color: Colors.grey,
+            ),
+            labelText: "Agama",
             labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
@@ -562,18 +761,18 @@ class _NewProfileState extends State<NewProfile> {
           }
           authClass
               .emailSignUp(
-                context,
-                widget.logged,
-                name.text,
-                email.text,
-                password.text,
-                pil,
-                selectedSekolah!,
-                tl!,
-                umur,
-                tingkat.text,
-                kecakapan,
-              )
+                  context,
+                  widget.logged,
+                  name.text,
+                  email.text,
+                  password.text,
+                  pil,
+                  uidSekolah,
+                  tl!,
+                  umur,
+                  tingkat.text,
+                  kecakapan,
+                  selectedAgama!)
               .then((value) => setState(() {
                     _isLoading = false;
                   }));
@@ -601,5 +800,35 @@ class _NewProfileState extends State<NewProfile> {
         ),
       ),
     );
+  }
+
+  Future<void> getSekolah(String kota, String kecamatan) async {
+    await _firestore
+        .collection("sekolah")
+        .where("kota", isEqualTo: kota)
+        .where("kecamatan", isEqualTo: kecamatan)
+        .get()
+        .then((value) {
+      listSekolah = [];
+      for (var doc in value.docs) {
+        if (!listSekolah.contains(doc.data()["nama"])) {
+          listSekolah.add(doc.data()["nama"]);
+        }
+      }
+    });
+    setState(() {});
+  }
+
+  Future<void> getSekolahUid(
+      String kota, String kecamatan, String sekolah) async {
+    await _firestore
+        .collection("sekolah")
+        .where("kota", isEqualTo: kota)
+        .where("kecamatan", isEqualTo: kecamatan)
+        .where("nama", isEqualTo: sekolah)
+        .get()
+        .then((value) {
+      uidSekolah = value.docs[0].data()["uid"];
+    });
   }
 }

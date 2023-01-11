@@ -1,27 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
+import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
-import 'package:sku_pramuka/screen/profile_screen.dart';
-import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
-import 'package:sku_pramuka/widgets/card_tugas.dart';
 
 final List<Widget> _children = [HomePage(), ListTugas(), ProfilePage()];
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ProfilePageState extends State<ProfilePage> {
   AuthClass authClass = AuthClass();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -32,34 +26,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 78, 108, 80),
         title: Text(
-          "SKU Pramuka",
+          "Profile",
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-        ),
-        actions: [
-          CircleAvatar(
-            backgroundColor: Colors.black,
-          ),
-          SizedBox(
-            width: 25,
-          ),
-        ],
-        bottom: PreferredSize(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 22, bottom: 10),
-                child: Text(
-                    DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white))),
-          ),
-          preferredSize: Size.fromHeight(35),
         ),
       ),
       body: Container(
@@ -74,8 +46,11 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
-        onTap: onTap,
-        currentIndex: 0,
+        onTap: (value) {
+          authClass.signOut(context);
+          authClass.signOutGoogle(context: context);
+        },
+        currentIndex: 2,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         selectedItemColor: Color.fromARGB(255, 78, 108, 80),

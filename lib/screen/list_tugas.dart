@@ -1,29 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:sku_pramuka/screen/list_tugas.dart';
+import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/profile_screen.dart';
-import 'package:sku_pramuka/screen/signin_screen.dart';
+import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
 final List<Widget> _children = [HomePage(), ListTugas(), ProfilePage()];
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ListTugas extends StatefulWidget {
+  const ListTugas({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ListTugas> createState() => _ListTugasState();
 }
 
-class _HomePageState extends State<HomePage> {
-  AuthClass authClass = AuthClass();
+class _ListTugasState extends State<ListTugas> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthClass authClass = AuthClass();
+
+  Map<String, dynamic> progress = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 78, 108, 80),
         title: Text(
-          "SKU Pramuka",
+          "Tugas",
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
@@ -47,35 +55,35 @@ class _HomePageState extends State<HomePage> {
             width: 25,
           ),
         ],
-        bottom: PreferredSize(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 22, bottom: 10),
-                child: Text(
-                    DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white))),
-          ),
-          preferredSize: Size.fromHeight(35),
-        ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[],
-          ),
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('tugas').orderBy("no").snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.data != null) {
+            return ListView.builder(
+              reverse: false,
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              itemCount: snapshot.data?.docs.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> map =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                return CardTugas(
+                    title: map["nama"],
+                    iconData: Icons.directions_run,
+                    iconColor: Colors.black54,
+                    iconBgColor: Colors.white,
+                    check: check(map["uid"]));
+              },
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         onTap: onTap,
-        currentIndex: 0,
+        currentIndex: 1,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         selectedItemColor: Color.fromARGB(255, 78, 108, 80),
@@ -121,8 +129,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void init() async {
+    await _firestore
+        .collection("siswa")
+        .doc(_auth.currentUser!.uid)
+        .collection("progress")
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        progress[doc.data()["tugas"].toString()] = doc.data();
+      }
+    });
+    setState(() {});
+  }
+
   void onTap(int index) {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => _children[index]));
+  }
+
+  bool check(String uid) {
+    return progress[uid] != null ? true : false;
   }
 }

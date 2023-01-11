@@ -21,6 +21,7 @@ class CardTugas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       width: MediaQuery.of(context).size.width,
       child: Row(
         children: [
@@ -29,11 +30,13 @@ class CardTugas extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TugasPage(),
+                  builder: (context) => TugasPage(
+                    title: title,
+                  ),
                 ),
               ),
               child: SizedBox(
-                height: 80,
+                height: 100,
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -42,40 +45,45 @@ class CardTugas extends StatelessWidget {
                   elevation: 5,
                   //color: Color.fromARGB(255, 247, 211, 132),
                   child: Container(
+                    alignment: Alignment.center,
                     decoration: const BoxDecoration(
                         gradient: LinearGradient(colors: [
                       Color.fromARGB(255, 247, 211, 132),
                       Color.fromARGB(255, 255, 225, 156),
                     ])),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 15),
-                        Container(
-                          height: 33,
-                          width: 36,
-                          decoration: BoxDecoration(
-                            color: iconBgColor,
-                            borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 33,
+                            width: 36,
+                            decoration: BoxDecoration(
+                              color: iconBgColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              iconData,
+                              color: iconColor,
+                            ),
                           ),
-                          child: Icon(
-                            iconData,
-                            color: iconColor,
+                          SizedBox(
+                            width: 15,
                           ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                                fontSize: 18,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87),
+                          Flexible(
+                            child: Text(
+                              title,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -87,7 +95,8 @@ class CardTugas extends StatelessWidget {
                 primarySwatch: Colors.green,
                 unselectedWidgetColor: Color(0xff5e616a),
                 checkboxTheme: CheckboxThemeData(
-                  fillColor: MaterialStateProperty.all(Color(0xff6cf8a9)),
+                  fillColor: MaterialStateProperty.all(
+                      Color.fromARGB(255, 170, 139, 86)),
                 )),
             child: Transform.scale(
               scale: 1.5,
@@ -95,7 +104,7 @@ class CardTugas extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
-                checkColor: Color(0xff0e3e26),
+                checkColor: Colors.white,
                 value: check,
                 onChanged: null,
               ),

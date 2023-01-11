@@ -4,7 +4,8 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class TugasPage extends StatefulWidget {
-  const TugasPage({super.key});
+  final String title;
+  const TugasPage({super.key, required this.title});
 
   @override
   State<TugasPage> createState() => _TugasPageState();
@@ -15,7 +16,7 @@ class _TugasPageState extends State<TugasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 1, 101, 68),
+          backgroundColor: Color.fromARGB(255, 78, 108, 80),
           title: Text("Tugas",
               style: TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
@@ -24,10 +25,13 @@ class _TugasPageState extends State<TugasPage> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-            Color.fromARGB(255, 235, 244, 245),
-            Color.fromARGB(255, 181, 198, 224)
-          ])),
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 240, 235, 206),
+                Color.fromARGB(255, 250, 245, 216),
+              ],
+            ),
+          ),
           child: SingleChildScrollView(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -42,12 +46,11 @@ class _TugasPageState extends State<TugasPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Menggapai Harapan Orang Tua",
+                      widget.title,
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
                       ),
                     ),
                     SizedBox(height: 30),
