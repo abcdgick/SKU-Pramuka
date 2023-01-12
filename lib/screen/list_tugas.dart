@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/profile_screen.dart';
+import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
@@ -23,13 +24,17 @@ class _ListTugasState extends State<ListTugas> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   AuthClass authClass = AuthClass();
+  bool _isLoading = false;
 
+  List<String> kategori = [];
+  Map<String, String> userMap = {"Kecakapan": "Dis"};
   Map<String, dynamic> progress = {};
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _isLoading = true;
     init();
   }
 
@@ -59,7 +64,7 @@ class _ListTugasState extends State<ListTugas> {
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('tugas').orderBy("no").snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.data != null) {
+          if (snapshot.hasData && !_isLoading) {
             return ListView.builder(
               reverse: false,
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -67,16 +72,28 @@ class _ListTugasState extends State<ListTugas> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> map =
                     snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                return CardTugas(
+                if ((map["no"] != 1 ||
+                    map["kategori"].contains(userMap["agama"]!.toLowerCase()) &&
+                        map["kecakapan"] ==
+                            userMap["kecakapan"]!.toLowerCase())) {
+                  kategori = (map["kategori"] as List)
+                      .map((item) => item as String)
+                      .toList();
+                  return CardTugas(
                     title: map["nama"],
                     iconData: Icons.directions_run,
                     iconColor: Colors.black54,
                     iconBgColor: Colors.white,
-                    check: check(map["uid"]));
+                    check: check(map["uid"]),
+                    kategori: kategori,
+                  );
+                } else {
+                  return Container();
+                }
               },
             );
           } else {
-            return Container();
+            return LoadingPage();
           }
         },
       ),
@@ -129,7 +146,7 @@ class _ListTugasState extends State<ListTugas> {
     );
   }
 
-  void init() async {
+  Future<void> init() async {
     await _firestore
         .collection("siswa")
         .doc(_auth.currentUser!.uid)
@@ -140,7 +157,17 @@ class _ListTugasState extends State<ListTugas> {
         progress[doc.data()["tugas"].toString()] = doc.data();
       }
     });
-    setState(() {});
+    await _firestore
+        .collection("siswa")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      userMap["kecakapan"] = value.data()!["kecakapan"];
+      userMap["agama"] = value.data()!["agama"];
+    });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void onTap(int index) {
@@ -148,7 +175,11 @@ class _ListTugasState extends State<ListTugas> {
         MaterialPageRoute(builder: (context) => _children[index]));
   }
 
-  bool check(String uid) {
-    return progress[uid] != null ? true : false;
+  String check(String uid) {
+    if (progress[uid] != null) {
+      return progress[uid]["progress"];
+    } else {
+      return "belum";
+    }
   }
 }

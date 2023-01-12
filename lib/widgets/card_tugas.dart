@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
+import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardTugas extends StatelessWidget {
   final String title;
   final IconData iconData;
   final Color iconColor;
   final Color iconBgColor;
-  final bool check;
+  final String check;
+  final List<String> kategori;
 
   const CardTugas(
       {super.key,
@@ -16,7 +18,8 @@ class CardTugas extends StatelessWidget {
       required this.iconData,
       required this.iconColor,
       required this.iconBgColor,
-      required this.check});
+      required this.check,
+      required this.kategori});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,8 @@ class CardTugas extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => TugasPage(
                     title: title,
+                    progress: check,
+                    kategori: kategori,
                   ),
                 ),
               ),
@@ -90,28 +95,48 @@ class CardTugas extends StatelessWidget {
               ),
             ),
           ),
-          Theme(
-            data: ThemeData(
-                primarySwatch: Colors.green,
-                unselectedWidgetColor: Color(0xff5e616a),
-                checkboxTheme: CheckboxThemeData(
-                  fillColor: MaterialStateProperty.all(
-                      Color.fromARGB(255, 170, 139, 86)),
-                )),
-            child: Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                checkColor: Colors.white,
-                value: check,
-                onChanged: null,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Custom_Checkbox(
+              isChecked: check != "belum",
+              backgroundColor: Color.fromARGB(255, 170, 139, 86),
+              borderColor: Color.fromARGB(255, 170, 139, 86),
+              icon: icon(),
+              iconColor: Colors.white,
             ),
           ),
+          // Theme(
+          //   data: ThemeData(
+          //       primarySwatch: Colors.green,
+          //       unselectedWidgetColor: Color(0xff5e616a),
+          //       checkboxTheme: CheckboxThemeData(
+          //         fillColor: MaterialStateProperty.all(
+          //             Color.fromARGB(255, 170, 139, 86)),
+          //       )),
+          //   child: Transform.scale(
+          //     scale: 1.5,
+          //     child: Checkbox(
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(5),
+          //       ),
+          //       checkColor: Colors.white,
+          //       value: check,
+          //       onChanged: null,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
+  }
+
+  IconData icon() {
+    if (check == "proses") {
+      return Icons.circle_outlined;
+    } else if (check == "ditolak") {
+      return Icons.close;
+    } else {
+      return Icons.check;
+    }
   }
 }

@@ -5,7 +5,13 @@ import 'package:flutter/src/widgets/framework.dart';
 
 class TugasPage extends StatefulWidget {
   final String title;
-  const TugasPage({super.key, required this.title});
+  final String progress;
+  final List<String> kategori;
+  const TugasPage(
+      {super.key,
+      required this.title,
+      required this.progress,
+      required this.kategori});
 
   @override
   State<TugasPage> createState() => _TugasPageState();
@@ -37,7 +43,7 @@ class _TugasPageState extends State<TugasPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                height: 30,
+                height: 20,
               ),
               Padding(
                 padding:
@@ -48,25 +54,20 @@ class _TugasPageState extends State<TugasPage> {
                     Text(
                       widget.title,
                       style: TextStyle(
-                        fontSize: 33,
+                        fontSize: 30,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 30),
-                    label("Tingkat"),
+                    label("Status"),
                     SizedBox(height: 12),
-                    Row(
-                      children: [
-                        chipData("Penegak", 0xff2664fa),
-                        SizedBox(width: 20),
-                        chipData("Bantara", 0xff2bc8d9)
-                      ],
-                    ),
+                    chipData(
+                        widget.progress.toUpperCase(), check(widget.progress)),
                     SizedBox(height: 25),
-                    label("Deskripsi"),
+                    label("Tanggal Pengerjaan"),
                     SizedBox(height: 12),
-                    description(),
+                    tanggal(),
                     SizedBox(height: 25),
                     label("Kategori"),
                     SizedBox(height: 12),
@@ -99,10 +100,11 @@ class _TugasPageState extends State<TugasPage> {
     return Text(
       label,
       style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w600,
-          fontSize: 16.5,
-          letterSpacing: 0.2),
+        color: Colors.black,
+        fontWeight: FontWeight.w600,
+        fontSize: 16.5,
+        letterSpacing: 0.2,
+      ),
     );
   }
 
@@ -135,7 +137,7 @@ class _TugasPageState extends State<TugasPage> {
     );
   }
 
-  Widget description() {
+  Widget tanggal() {
     return Container(
       height: 150,
       width: MediaQuery.of(context).size.width,
@@ -174,7 +176,10 @@ class _TugasPageState extends State<TugasPage> {
       label: Text(
         label,
         style: TextStyle(
-            color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
     );
@@ -204,5 +209,20 @@ class _TugasPageState extends State<TugasPage> {
         ),
       ),
     );
+  }
+
+  int check(String progress) {
+    switch (progress) {
+      case "belum":
+        return 0xff2bc8d9;
+      case "proses":
+        return 0xff2664fa;
+      case "ditolak":
+        return 0xFFFF6464;
+      case "diterima":
+        return 0xffB3FFAE;
+      default:
+        return 0xFF000000;
+    }
   }
 }
