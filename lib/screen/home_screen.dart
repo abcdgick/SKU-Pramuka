@@ -12,7 +12,13 @@ import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
-final List<Widget> _children = [HomePage(), ListTugas(), ProfilePage()];
+final List<Widget> _children = [
+  HomePage(),
+  ListTugas(),
+  ProfilePage(
+    isPembina: false,
+  )
+];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,43 +30,61 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        toolbarHeight: 70,
         backgroundColor: Color.fromARGB(255, 78, 108, 80),
         title: Text(
-          "SKU Pramuka",
+          DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
         actions: [
-          CircleAvatar(
-            backgroundColor: Colors.black,
-          ),
-          SizedBox(
-            width: 25,
+          StreamBuilder(
+            stream: _firestore
+                .collection("siswa")
+                .doc(_auth.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  children: [
+                    ClipOval(
+                      child: SizedBox.fromSize(
+                        size: const Size.fromRadius(28),
+                        child: Image.network(
+                          snapshot.data!["profile"],
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                );
+              } else
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.black,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                );
+            },
           ),
         ],
-        bottom: PreferredSize(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 22, bottom: 10),
-                child: Text(
-                    DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white))),
-          ),
-          preferredSize: Size.fromHeight(35),
-        ),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,

@@ -1,14 +1,24 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class TugasPage extends StatefulWidget {
+  final String uid;
   final String title;
   final String progress;
   final List<String> kategori;
   const TugasPage(
       {super.key,
+      required this.uid,
       required this.title,
       required this.progress,
       required this.kategori});
@@ -18,28 +28,41 @@ class TugasPage extends StatefulWidget {
 }
 
 class _TugasPageState extends State<TugasPage> {
+  File? file;
+  bool isFoto = false;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController isiText = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.kategori.contains("outdoor") ? isFoto = true : null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 78, 108, 80),
-          title: Text("Tugas",
-              style: TextStyle(color: Colors.white, fontSize: 24)),
-          centerTitle: true,
-        ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 240, 235, 206),
-                Color.fromARGB(255, 250, 245, 216),
-              ],
-            ),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        title:
+            Text("Tugas", style: TextStyle(color: Colors.white, fontSize: 24)),
+        centerTitle: true,
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 240, 235, 206),
+              Color.fromARGB(255, 250, 245, 216),
+            ],
           ),
-          child: SingleChildScrollView(
-              child: Column(
+        ),
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -63,11 +86,9 @@ class _TugasPageState extends State<TugasPage> {
                     label("Status"),
                     SizedBox(height: 12),
                     chipData(
-                        widget.progress.toUpperCase(), check(widget.progress)),
-                    SizedBox(height: 25),
-                    label("Tanggal Pengerjaan"),
-                    SizedBox(height: 12),
-                    tanggal(),
+                      widget.progress.toUpperCase(),
+                      check(widget.progress),
+                    ),
                     SizedBox(height: 25),
                     label("Kategori"),
                     SizedBox(height: 12),
@@ -85,15 +106,21 @@ class _TugasPageState extends State<TugasPage> {
                         chipData("Entah", 0xff2bc8d9),
                       ],
                     ),
+                    SizedBox(height: 25),
+                    isFoto ? label("Foto Pengerjaan") : label("Text Jawaban"),
+                    SizedBox(height: 15),
+                    isFoto ? foto() : text(),
                     SizedBox(height: 40),
                     button(),
                     SizedBox(height: 20),
                   ],
                 ),
-              )
+              ),
             ],
-          )),
-        ));
+          ),
+        ),
+      ),
+    );
   }
 
   Widget label(String label) {
@@ -137,7 +164,7 @@ class _TugasPageState extends State<TugasPage> {
     );
   }
 
-  Widget tanggal() {
+  Widget text() {
     return Container(
       height: 150,
       width: MediaQuery.of(context).size.width,
@@ -150,6 +177,7 @@ class _TugasPageState extends State<TugasPage> {
           color: Colors.black,
           fontSize: 17,
         ),
+        controller: isiText,
         maxLines: null,
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -165,6 +193,73 @@ class _TugasPageState extends State<TugasPage> {
         ),
       ),
     );
+  }
+
+  Widget foto() {
+    return file != null
+        ? Center(
+            child: Image.file(
+              file!,
+              width: 150,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          )
+        : Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10))),
+              onPressed: () async {
+                final source = await showImageSource(context);
+
+                if (source == null) return;
+                pickImage(source);
+              },
+              child: const Text('Ambil Gambar'),
+            ),
+          );
+  }
+
+  Future<ImageSource?> showImageSource(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: ((context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("Camera"),
+                onTap: () => Navigator.of(context).pop(ImageSource.camera),
+              ),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text("Gallery"),
+                onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+              ),
+            ],
+          )),
+    );
+  }
+
+  Future<bool> pickImage(ImageSource source) async {
+    try {
+      await ImagePicker().pickImage(source: source).then((value) async {
+        if (value != null) {
+          setState(() {
+            file = File(value.path);
+          });
+        }
+      });
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal mengambil gambar: $e"),
+        ),
+      );
+    }
+    return false;
   }
 
   Widget chipData(String label, int color) {
@@ -186,25 +281,62 @@ class _TugasPageState extends State<TugasPage> {
   }
 
   Widget button() {
-    return Container(
-      height: 56,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [
-            Color(0xff8a32f1),
-            Color(0xffad32f9),
-          ],
+    return InkWell(
+      onTap: () async {
+        String fileName = Uuid().v1();
+        String key = "";
+        String value = "";
+
+        if (isFoto) {
+          var ref = FirebaseStorage.instance
+              .ref()
+              .child('tugas')
+              .child("$fileName.jpg");
+          var uploadTask = await ref.putFile(file!);
+          key = "gambar";
+          value = await ref.getDownloadURL();
+        } else if (isiText.text.isNotEmpty) {
+          key = "teks";
+          value = isiText.text;
+        } else {
+          return;
+        }
+
+        await _firestore
+            .collection("siswa")
+            .doc(_auth.currentUser!.uid)
+            .collection("progress")
+            .doc()
+            .set({
+          "pembina": "Ys95RAzEFh7uIkmPyjwp",
+          "progress": "proses",
+          "tanggal": DateTime.now(),
+          "tugas": widget.uid,
+          key: value
+        });
+
+        Navigator.pop(context);
+      },
+      child: Container(
+        height: 56,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xff8a32f1),
+              Color(0xffad32f9),
+            ],
+          ),
         ),
-      ),
-      child: Center(
-        child: Text(
-          "Submit",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+        child: Center(
+          child: Text(
+            "Submit",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

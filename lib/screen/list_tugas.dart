@@ -11,7 +11,13 @@ import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
-final List<Widget> _children = [HomePage(), ListTugas(), ProfilePage()];
+final List<Widget> _children = [
+  HomePage(),
+  ListTugas(),
+  ProfilePage(
+    isPembina: false,
+  )
+];
 
 class ListTugas extends StatefulWidget {
   const ListTugas({super.key});
@@ -43,21 +49,53 @@ class _ListTugasState extends State<ListTugas> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        toolbarHeight: 70,
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 78, 108, 80),
         title: Text(
           "Tugas",
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
         actions: [
-          CircleAvatar(
-            backgroundColor: Colors.black,
-          ),
-          SizedBox(
-            width: 25,
+          StreamBuilder(
+            stream: _firestore
+                .collection("siswa")
+                .doc(_auth.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  children: [
+                    ClipOval(
+                      child: SizedBox.fromSize(
+                        size: const Size.fromRadius(28),
+                        child: Image.network(
+                          snapshot.data!["profile"],
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                );
+              } else
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.black,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                );
+            },
           ),
         ],
       ),
@@ -80,10 +118,17 @@ class _ListTugasState extends State<ListTugas> {
                       .map((item) => item as String)
                       .toList();
                   return CardTugas(
+                    uid: map["uid"],
                     title: map["nama"],
-                    iconData: Icons.directions_run,
-                    iconColor: Colors.black54,
-                    iconBgColor: Colors.white,
+                    iconData: map['kategori'].contains("outdoor")
+                        ? Icons.hiking
+                        : Icons.edit,
+                    iconColor: map['kategori'].contains("outdoor")
+                        ? Colors.white
+                        : Color(0xFF395144),
+                    iconBgColor: map['kategori'].contains("outdoor")
+                        ? Color(0xff00B8A9)
+                        : Colors.white,
                     check: check(map["uid"]),
                     kategori: kategori,
                   );
@@ -147,16 +192,7 @@ class _ListTugasState extends State<ListTugas> {
   }
 
   Future<void> init() async {
-    await _firestore
-        .collection("siswa")
-        .doc(_auth.currentUser!.uid)
-        .collection("progress")
-        .get()
-        .then((value) {
-      for (var doc in value.docs) {
-        progress[doc.data()["tugas"].toString()] = doc.data();
-      }
-    });
+    init2();
     await _firestore
         .collection("siswa")
         .doc(_auth.currentUser!.uid)
@@ -167,6 +203,19 @@ class _ListTugasState extends State<ListTugas> {
     });
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  Future<void> init2() async {
+    await _firestore
+        .collection("siswa")
+        .doc(_auth.currentUser!.uid)
+        .collection("progress")
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        progress[doc.data()["tugas"].toString()] = doc.data();
+      }
     });
   }
 

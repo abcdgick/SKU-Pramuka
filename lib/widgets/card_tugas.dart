@@ -5,6 +5,7 @@ import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardTugas extends StatelessWidget {
+  final String uid;
   final String title;
   final IconData iconData;
   final Color iconColor;
@@ -14,6 +15,7 @@ class CardTugas extends StatelessWidget {
 
   const CardTugas(
       {super.key,
+      required this.uid,
       required this.title,
       required this.iconData,
       required this.iconColor,
@@ -34,6 +36,7 @@ class CardTugas extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TugasPage(
+                    uid: uid,
                     title: title,
                     progress: check,
                     kategori: kategori,
