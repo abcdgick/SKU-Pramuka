@@ -118,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   size: const Size.fromRadius(120),
                                   child: Image.network(
                                       snapshot.data!['profile'],
-                                      fit: BoxFit.fill),
+                                      fit: BoxFit.cover),
                                 ),
                               ),
                             ),

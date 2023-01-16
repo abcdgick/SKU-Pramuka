@@ -53,7 +53,7 @@ class _ListTugasState extends State<ListTugas> {
         centerTitle: true,
         backgroundColor: Color.fromARGB(255, 78, 108, 80),
         title: Text(
-          "Tugas",
+          "SKU",
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -192,7 +192,6 @@ class _ListTugasState extends State<ListTugas> {
   }
 
   Future<void> init() async {
-    init2();
     await _firestore
         .collection("siswa")
         .doc(_auth.currentUser!.uid)
@@ -201,6 +200,7 @@ class _ListTugasState extends State<ListTugas> {
       userMap["kecakapan"] = value.data()!["kecakapan"];
       userMap["agama"] = value.data()!["agama"];
     });
+    init2();
     setState(() {
       _isLoading = false;
     });

@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sku_pramuka/screen/list_tugas.dart';
+import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class TugasPage extends StatefulWidget {
@@ -28,8 +30,11 @@ class TugasPage extends StatefulWidget {
 }
 
 class _TugasPageState extends State<TugasPage> {
+  String inet = "";
   File? file;
   bool isFoto = false;
+  bool proses = false;
+  bool _isLoading = false;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController isiText = TextEditingController();
@@ -39,88 +44,93 @@ class _TugasPageState extends State<TugasPage> {
     // TODO: implement initState
     super.initState();
     widget.kategori.contains("outdoor") ? isFoto = true : null;
+    init(widget.progress);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
-        title:
-            Text("Tugas", style: TextStyle(color: Colors.white, fontSize: 24)),
-        centerTitle: true,
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 240, 235, 206),
-              Color.fromARGB(255, 250, 245, 216),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    label("Status"),
-                    SizedBox(height: 12),
-                    chipData(
-                      widget.progress.toUpperCase(),
-                      check(widget.progress),
-                    ),
-                    SizedBox(height: 25),
-                    label("Kategori"),
-                    SizedBox(height: 12),
-                    Wrap(
-                      runSpacing: 10,
-                      children: [
-                        chipData("Menyanyi", 0xffff6d6e),
-                        SizedBox(width: 20),
-                        chipData("Gotong Royong", 0xfff29732),
-                        SizedBox(width: 20),
-                        chipData("Menulis", 0xff6557ff),
-                        SizedBox(width: 20),
-                        chipData("Outdoor", 0xff234ebd),
-                        SizedBox(width: 20),
-                        chipData("Entah", 0xff2bc8d9),
-                      ],
-                    ),
-                    SizedBox(height: 25),
-                    isFoto ? label("Foto Pengerjaan") : label("Text Jawaban"),
-                    SizedBox(height: 15),
-                    isFoto ? foto() : text(),
-                    SizedBox(height: 40),
-                    button(),
-                    SizedBox(height: 20),
+    return _isLoading
+        ? LoadingPage()
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color.fromARGB(255, 78, 108, 80),
+              title: Text("Tugas",
+                  style: TextStyle(color: Colors.white, fontSize: 24)),
+              centerTitle: true,
+            ),
+            body: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 240, 235, 206),
+                    Color.fromARGB(255, 250, 245, 216),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          label("Status"),
+                          SizedBox(height: 12),
+                          chipData(
+                            widget.progress.toUpperCase(),
+                            check(widget.progress),
+                          ),
+                          SizedBox(height: 25),
+                          label("Kategori"),
+                          SizedBox(height: 12),
+                          Wrap(
+                            runSpacing: 10,
+                            children: [
+                              chipData("Menyanyi", 0xffff6d6e),
+                              SizedBox(width: 20),
+                              chipData("Gotong Royong", 0xfff29732),
+                              SizedBox(width: 20),
+                              chipData("Menulis", 0xff6557ff),
+                              SizedBox(width: 20),
+                              chipData("Outdoor", 0xff234ebd),
+                              SizedBox(width: 20),
+                              chipData("Entah", 0xff2bc8d9),
+                            ],
+                          ),
+                          SizedBox(height: 25),
+                          isFoto
+                              ? label("Foto Pengerjaan")
+                              : label("Text Jawaban"),
+                          SizedBox(height: 15),
+                          isFoto ? foto() : text(),
+                          SizedBox(height: 40),
+                          !proses ? button() : Container(),
+                          !proses ? SizedBox(height: 20) : Container(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   Widget label(String label) {
@@ -173,6 +183,7 @@ class _TugasPageState extends State<TugasPage> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
+        enabled: !proses,
         style: TextStyle(
           color: Colors.black,
           fontSize: 17,
@@ -196,14 +207,21 @@ class _TugasPageState extends State<TugasPage> {
   }
 
   Widget foto() {
-    return file != null
+    return file != null || proses
         ? Center(
-            child: Image.file(
-              file!,
-              width: 150,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
+            child: proses
+                ? Image.network(
+                    inet,
+                    width: 150,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(
+                    file!,
+                    width: 150,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
           )
         : Center(
             child: ElevatedButton(
@@ -313,9 +331,11 @@ class _TugasPageState extends State<TugasPage> {
           "tanggal": DateTime.now(),
           "tugas": widget.uid,
           key: value
-        });
-
-        Navigator.pop(context);
+        }).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const ListTugas()),
+                ModalRoute.withName('/')));
       },
       child: Container(
         height: 56,
@@ -341,6 +361,32 @@ class _TugasPageState extends State<TugasPage> {
         ),
       ),
     );
+  }
+
+  void init(String progress) async {
+    if (progress == "proses" || progress == "diterima") {
+      setState(() {
+        _isLoading = true;
+      });
+      proses = true;
+      await _firestore
+          .collection("siswa")
+          .doc(_auth.currentUser!.uid)
+          .collection("progress")
+          .where("tugas", isEqualTo: widget.uid)
+          .get()
+          .then((value) {
+        if (isFoto)
+          inet = value.docs[0].data()["gambar"];
+        else
+          isiText.text = value.docs[0].data()["teks"].toString();
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      proses = false;
+    }
   }
 
   int check(String progress) {

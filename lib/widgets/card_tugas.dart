@@ -13,7 +13,7 @@ class CardTugas extends StatelessWidget {
   final String check;
   final List<String> kategori;
 
-  const CardTugas(
+  CardTugas(
       {super.key,
       required this.uid,
       required this.title,
@@ -22,6 +22,8 @@ class CardTugas extends StatelessWidget {
       required this.iconBgColor,
       required this.check,
       required this.kategori});
+
+  Color checkColor = Color.fromARGB(255, 170, 139, 86);
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +56,11 @@ class CardTugas extends StatelessWidget {
                   //color: Color.fromARGB(255, 247, 211, 132),
                   child: Container(
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 247, 211, 132),
-                      Color.fromARGB(255, 255, 225, 156),
-                    ])),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: ambilWarna(check),
+                      ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 15.0),
@@ -102,8 +104,8 @@ class CardTugas extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8.0),
             child: Custom_Checkbox(
               isChecked: check != "belum",
-              backgroundColor: Color.fromARGB(255, 170, 139, 86),
-              borderColor: Color.fromARGB(255, 170, 139, 86),
+              backgroundColor: checkColor,
+              borderColor: checkColor,
               icon: icon(),
               iconColor: Colors.white,
             ),
@@ -140,6 +142,40 @@ class CardTugas extends StatelessWidget {
       return Icons.close;
     } else {
       return Icons.check;
+    }
+  }
+
+  List<Color> ambilWarna(String progress) {
+    switch (progress) {
+      case "belum":
+        checkColor = Color.fromARGB(255, 170, 139, 86);
+        return [
+          Color.fromARGB(255, 247, 211, 132),
+          Color.fromARGB(255, 255, 225, 156),
+        ];
+      case "proses":
+        checkColor = Color(0xff2664fa);
+        return [
+          Color.fromARGB(255, 127, 164, 250),
+          Color.fromARGB(255, 147, 184, 250),
+        ];
+      case "ditolak":
+        checkColor = Color(0xFFFF6464);
+        return [
+          Color.fromARGB(255, 253, 125, 125),
+          Color.fromARGB(255, 255, 145, 145),
+        ];
+      case "diterima":
+        checkColor = Color(0xff00CBA9);
+        return [
+          Color.fromARGB(255, 147, 255, 139),
+          Color.fromARGB(255, 167, 255, 159),
+        ];
+      default:
+        return [
+          Color.fromARGB(255, 247, 211, 132),
+          Color.fromARGB(255, 255, 225, 156),
+        ];
     }
   }
 }
