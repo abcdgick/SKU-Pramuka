@@ -28,58 +28,32 @@ class _KompasPageState extends State<KompasPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Flutter Compass'),
+        toolbarHeight: 70,
+        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        centerTitle: true,
+        title: Text(
+          "Kompas",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: Builder(builder: (context) {
         if (_hasPermissions) {
-          return Column(
-            children: <Widget>[
-              _buildManualReader(),
-              Expanded(child: _buildCompass()),
-            ],
+          return Container(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              children: <Widget>[
+                Expanded(child: _buildCompass()),
+              ],
+            ),
           );
         } else {
           return _buildPermissionSheet();
         }
       }),
-    );
-  }
-
-  Widget _buildManualReader() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          ElevatedButton(
-            child: Text('Read Value'),
-            onPressed: () async {
-              final CompassEvent tmp = await FlutterCompass.events!.first;
-              setState(() {
-                _lastRead = tmp;
-                _lastReadAt = DateTime.now();
-              });
-            },
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    '$_lastRead',
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                  Text(
-                    '$_lastReadAt',
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -131,9 +105,9 @@ class _KompasPageState extends State<KompasPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Location Permission Required'),
+          Text('Mohon Izinkan Penggunaan Data Lokasi Untuk Menggunakan Kompas'),
           ElevatedButton(
-            child: Text('Request Permissions'),
+            child: Text('Tampilkan Menu Izin'),
             onPressed: () {
               Permission.locationWhenInUse.request().then((ignored) {
                 _fetchPermissionStatus();
@@ -142,7 +116,7 @@ class _KompasPageState extends State<KompasPage> {
           ),
           SizedBox(height: 16),
           ElevatedButton(
-            child: Text('Open App Settings'),
+            child: Text('Buka Laman Pengaturan'),
             onPressed: () {
               openAppSettings().then((opened) {
                 //

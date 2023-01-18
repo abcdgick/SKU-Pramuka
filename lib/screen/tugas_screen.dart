@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:uuid/uuid.dart';
@@ -18,12 +19,14 @@ class TugasPage extends StatefulWidget {
   final String title;
   final String progress;
   final List<String> kategori;
+  final Map<String, String> pembina;
   const TugasPage(
       {super.key,
       required this.uid,
       required this.title,
       required this.progress,
-      required this.kategori});
+      required this.kategori,
+      required this.pembina});
 
   @override
   State<TugasPage> createState() => _TugasPageState();
@@ -31,6 +34,8 @@ class TugasPage extends StatefulWidget {
 
 class _TugasPageState extends State<TugasPage> {
   String inet = "";
+  String? pembina;
+  List<String>? listPembina;
   File? file;
   bool isFoto = false;
   bool proses = false;
@@ -38,13 +43,14 @@ class _TugasPageState extends State<TugasPage> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController isiText = TextEditingController();
+  String? pengerjaan;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     widget.kategori.contains("outdoor") ? isFoto = true : null;
-    init(widget.progress);
+    init(widget.progress, widget.pembina);
   }
 
   @override
@@ -98,6 +104,10 @@ class _TugasPageState extends State<TugasPage> {
                             check(widget.progress),
                           ),
                           SizedBox(height: 25),
+                          proses ? label("Dikerjakan pada") : Container(),
+                          proses ? SizedBox(height: 12) : Container(),
+                          proses ? dilaksanakan() : Container(),
+                          proses ? SizedBox(height: 25) : Container(),
                           label("Kategori"),
                           SizedBox(height: 12),
                           Wrap(
@@ -120,9 +130,13 @@ class _TugasPageState extends State<TugasPage> {
                               : label("Text Jawaban"),
                           SizedBox(height: 15),
                           isFoto ? foto() : text(),
-                          SizedBox(height: 40),
+                          !proses ? SizedBox(height: 25) : Container(),
+                          !proses ? label("Pembina") : Container(),
+                          !proses ? SizedBox(height: 12) : Container(),
+                          !proses ? cariPembina() : Container(),
+                          !proses ? SizedBox(height: 40) : Container(),
                           !proses ? button() : Container(),
-                          !proses ? SizedBox(height: 20) : Container(),
+                          SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -202,6 +216,54 @@ class _TugasPageState extends State<TugasPage> {
             right: 20,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget cariPembina() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 60,
+      child: DropdownButtonFormField<String>(
+        value: pembina,
+        items: listPembina!.map((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            pembina = value;
+          });
+        },
+        validator: (value) => value == null ? "Mohon isikan pembina" : null,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+        decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(
+                color: Colors.white,
+                width: 1,
+              ),
+            ),
+            prefixIcon: const Icon(
+              Icons.hiking,
+              color: Colors.grey,
+            ),
+            labelText: "Pembina",
+            labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.white,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(15)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(15))),
       ),
     );
   }
@@ -301,41 +363,64 @@ class _TugasPageState extends State<TugasPage> {
   Widget button() {
     return InkWell(
       onTap: () async {
-        String fileName = Uuid().v1();
-        String key = "";
-        String value = "";
+        try {
+          String fileName = Uuid().v1();
+          String key = "";
+          String value = "";
 
-        if (isFoto) {
-          var ref = FirebaseStorage.instance
-              .ref()
-              .child('tugas')
-              .child("$fileName.jpg");
-          var uploadTask = await ref.putFile(file!);
-          key = "gambar";
-          value = await ref.getDownloadURL();
-        } else if (isiText.text.isNotEmpty) {
-          key = "teks";
-          value = isiText.text;
-        } else {
-          return;
+          String uid = widget.pembina.keys
+              .firstWhere((k) => widget.pembina[k] == pembina);
+
+          if (isFoto) {
+            var ref = FirebaseStorage.instance
+                .ref()
+                .child('tugas')
+                .child("$fileName.jpg");
+            var uploadTask = await ref.putFile(file!);
+            key = "gambar";
+            value = await ref.getDownloadURL();
+          } else if (isiText.text.isNotEmpty) {
+            key = "teks";
+            value = isiText.text;
+          } else {
+            return;
+          }
+
+          await _firestore
+              .collection("pembina")
+              .doc(uid)
+              .collection("pending")
+              .doc()
+              .set({
+            "siswa": _auth.currentUser!.uid,
+            "tanggal": FieldValue.serverTimestamp(),
+            "tugas": widget.uid,
+            key: value
+          });
+
+          await _firestore
+              .collection("siswa")
+              .doc(_auth.currentUser!.uid)
+              .collection("progress")
+              .doc()
+              .set({
+            "pembina": uid,
+            "progress": "proses",
+            "tanggal": FieldValue.serverTimestamp(),
+            "tugas": widget.uid,
+            key: value
+          }).then((value) => Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (BuildContext context) => const ListTugas()),
+                  ModalRoute.withName('/')));
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Kerjakan tugasnya dengan benar ya"),
+            ),
+          );
         }
-
-        await _firestore
-            .collection("siswa")
-            .doc(_auth.currentUser!.uid)
-            .collection("progress")
-            .doc()
-            .set({
-          "pembina": "Ys95RAzEFh7uIkmPyjwp",
-          "progress": "proses",
-          "tanggal": DateTime.now(),
-          "tugas": widget.uid,
-          key: value
-        }).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const ListTugas()),
-                ModalRoute.withName('/')));
       },
       child: Container(
         height: 56,
@@ -363,7 +448,19 @@ class _TugasPageState extends State<TugasPage> {
     );
   }
 
-  void init(String progress) async {
+  Widget dilaksanakan() {
+    return Text(
+      "$pengerjaan - $pembina",
+      style: TextStyle(
+        color: Colors.blueGrey,
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
+    );
+    ;
+  }
+
+  void init(String progress, Map<String, String> pembina) async {
     if (progress == "proses" || progress == "diterima") {
       setState(() {
         _isLoading = true;
@@ -375,16 +472,29 @@ class _TugasPageState extends State<TugasPage> {
           .collection("progress")
           .where("tugas", isEqualTo: widget.uid)
           .get()
-          .then((value) {
+          .then((value) async {
         if (isFoto)
           inet = value.docs[0].data()["gambar"];
         else
           isiText.text = value.docs[0].data()["teks"].toString();
+
+        pengerjaan = DateFormat("EEEE, d MMMM yyyy", "id_ID")
+            .format(value.docs[0].data()['tanggal'].toDate());
+
+        await _firestore
+            .collection("pembina")
+            .doc(value.docs[0].data()["pembina"])
+            .get()
+            .then((value2) => this.pembina = value2.data()!["nama"]);
       });
       setState(() {
         _isLoading = false;
       });
     } else {
+      listPembina = [];
+      pembina.forEach((key, value) {
+        listPembina!.add(value);
+      });
       proses = false;
     }
   }
@@ -398,7 +508,7 @@ class _TugasPageState extends State<TugasPage> {
       case "ditolak":
         return 0xFFFF6464;
       case "diterima":
-        return 0xffB3FFAE;
+        return 0xff3C6255;
       default:
         return 0xFF000000;
     }

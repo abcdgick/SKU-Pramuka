@@ -8,6 +8,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/extra/compass.dart';
+import 'package:sku_pramuka/screen/extra/pramuka_icons.dart';
+import 'package:sku_pramuka/screen/extra/teks.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
 import 'package:sku_pramuka/screen/pengumuman_screen.dart';
 import 'package:sku_pramuka/screen/profile_screen.dart';
@@ -155,81 +157,120 @@ class _HomePageState extends State<HomePage> {
                         vertical: 30,
                       ),
                       child: Wrap(
-                        runSpacing: 10,
+                        runSpacing: 30,
                         children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: null,
-                                color: Color.fromARGB(255, 78, 141, 82),
-                                icon: Icon(
-                                  Icons.inbox,
-                                  size: 50,
-                                  color: Color.fromARGB(255, 92, 170, 97),
-                                ),
-                                padding: EdgeInsets.only(bottom: 30),
-                              ),
-                              Text(
-                                "Pancasila",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TeksPage(
+                                  index: 0,
                                 ),
                               ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: null,
-                                icon: Icon(
-                                  Icons.invert_colors_off,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Pramuka.pancasila,
                                   color: Color.fromARGB(255, 92, 170, 97),
                                   size: 50,
                                 ),
-                                padding: EdgeInsets.only(bottom: 30),
-                              ),
-                              Text(
-                                "Dasa Dharma",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => KompasPage(),
+                                Text(
+                                  "Pancasila",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                icon: Icon(
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 30),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TeksPage(
+                                  index: 1,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Color.fromARGB(255, 92, 170, 97),
+                                  size: 50,
+                                ),
+                                Text(
+                                  "Trisatya",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 30),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TeksPage(
+                                  index: 2,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.menu_book,
+                                  color: Color.fromARGB(255, 92, 170, 97),
+                                  size: 50,
+                                ),
+                                Text(
+                                  "Dasa Dharma",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 30),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => KompasPage(),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
                                   Icons.explore,
                                   color: Color.fromARGB(255, 92, 170, 97),
                                   size: 50,
                                 ),
-                                padding: EdgeInsets.only(bottom: 30),
-                              ),
-                              Text(
-                                "Kompas",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  "Kompas",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),

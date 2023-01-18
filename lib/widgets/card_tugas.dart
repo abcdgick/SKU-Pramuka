@@ -12,6 +12,7 @@ class CardTugas extends StatelessWidget {
   final Color iconBgColor;
   final String check;
   final List<String> kategori;
+  Map<String, String> pembina;
 
   CardTugas(
       {super.key,
@@ -21,7 +22,8 @@ class CardTugas extends StatelessWidget {
       required this.iconColor,
       required this.iconBgColor,
       required this.check,
-      required this.kategori});
+      required this.kategori,
+      required this.pembina});
 
   Color checkColor = Color.fromARGB(255, 170, 139, 86);
 
@@ -38,11 +40,13 @@ class CardTugas extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TugasPage(
-                    uid: uid,
-                    title: title,
-                    progress: check,
-                    kategori: kategori,
-                  ),
+                      uid: uid,
+                      title: title,
+                      progress: check,
+                      kategori: kategori,
+                      pembina: check == "belum" || check == "ditolak"
+                          ? pembina
+                          : {}),
                 ),
               ),
               child: SizedBox(

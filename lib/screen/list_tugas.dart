@@ -34,6 +34,7 @@ class _ListTugasState extends State<ListTugas> {
 
   List<String> kategori = [];
   Map<String, String> userMap = {"Kecakapan": "Dis"};
+  Map<String, String> pembina = {};
   Map<String, dynamic> progress = {};
 
   @override
@@ -131,6 +132,7 @@ class _ListTugasState extends State<ListTugas> {
                         : Colors.white,
                     check: check(map["uid"]),
                     kategori: kategori,
+                    pembina: pembina,
                   );
                 } else {
                   return Container();
@@ -200,10 +202,9 @@ class _ListTugasState extends State<ListTugas> {
       userMap["kecakapan"] = value.data()!["kecakapan"];
       userMap["agama"] = value.data()!["agama"];
     });
-    init2();
-    setState(() {
-      _isLoading = false;
-    });
+    init2().then((value) => setState((() {
+          _isLoading = false;
+        })));
   }
 
   Future<void> init2() async {
@@ -215,6 +216,19 @@ class _ListTugasState extends State<ListTugas> {
         .then((value) {
       for (var doc in value.docs) {
         progress[doc.data()["tugas"].toString()] = doc.data();
+      }
+    });
+    init3();
+  }
+
+  Future<void> init3() async {
+    await _firestore
+        .collection("pembina")
+        .where("siswa", arrayContains: _auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        pembina[doc.data()["uid"].toString()] = doc.data()["nama"].toString();
       }
     });
   }
