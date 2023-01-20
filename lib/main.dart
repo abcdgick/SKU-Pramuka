@@ -45,8 +45,9 @@ class _MyAppState extends State<MyApp> {
     String? token = await authClass.getToken();
     if (token != null) {
       String? name = await authClass.getName();
+      int i = int.parse((await authClass.getI())!);
       setState(() {
-        currentPage = HomePage();
+        currentPage = HomePage(i: i);
       });
     }
   }

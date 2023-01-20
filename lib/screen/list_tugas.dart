@@ -9,18 +9,23 @@ import 'package:sku_pramuka/screen/profile_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
+import 'package:sku_pramuka/widgets/card_cek.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
+int index = 0;
+
 final List<Widget> _children = [
-  HomePage(),
-  ListTugas(),
+  HomePage(i: index),
+  ListTugas(i: index),
   ProfilePage(
     isPembina: false,
+    i: index,
   )
 ];
 
 class ListTugas extends StatefulWidget {
-  const ListTugas({super.key});
+  final int i;
+  const ListTugas({super.key, required this.i});
 
   @override
   State<ListTugas> createState() => _ListTugasState();
@@ -36,13 +41,29 @@ class _ListTugasState extends State<ListTugas> {
   Map<String, String> userMap = {"Kecakapan": "Dis"};
   Map<String, String> pembina = {};
   Map<String, dynamic> progress = {};
+  Map<String, dynamic>? siswaMap = {};
+  Map<String, dynamic>? tugasMap = {};
+  String sekolah = "";
+
+  String db = "siswa";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _isLoading = true;
-    init();
+    switch (widget.i) {
+      case 0:
+        db = "siswa";
+        init();
+        break;
+      case 1:
+        db = "pembina";
+        initPembina();
+        break;
+      default:
+    }
+    index = widget.i;
   }
 
   @override
@@ -64,7 +85,7 @@ class _ListTugasState extends State<ListTugas> {
         actions: [
           StreamBuilder(
             stream: _firestore
-                .collection("siswa")
+                .collection(db)
                 .doc(_auth.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -100,50 +121,7 @@ class _ListTugasState extends State<ListTugas> {
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('tugas').orderBy("no").snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData && !_isLoading) {
-            return ListView.builder(
-              reverse: false,
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              itemCount: snapshot.data?.docs.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> map =
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                if ((map["no"] != 1 ||
-                    map["kategori"].contains(userMap["agama"]!.toLowerCase()) &&
-                        map["kecakapan"] ==
-                            userMap["kecakapan"]!.toLowerCase())) {
-                  kategori = (map["kategori"] as List)
-                      .map((item) => item as String)
-                      .toList();
-                  return CardTugas(
-                    uid: map["uid"],
-                    title: map["nama"],
-                    iconData: map['kategori'].contains("outdoor")
-                        ? Icons.hiking
-                        : Icons.edit,
-                    iconColor: map['kategori'].contains("outdoor")
-                        ? Colors.white
-                        : Color(0xFF395144),
-                    iconBgColor: map['kategori'].contains("outdoor")
-                        ? Color(0xff00B8A9)
-                        : Colors.white,
-                    check: check(map["uid"]),
-                    kategori: kategori,
-                    pembina: pembina,
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            );
-          } else {
-            return LoadingPage();
-          }
-        },
-      ),
+      body: widget.i == 0 ? SiswaWidget() : PembinaWidget(),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         onTap: onTap,
@@ -193,6 +171,100 @@ class _ListTugasState extends State<ListTugas> {
     );
   }
 
+  StreamBuilder<QuerySnapshot<Object?>> SiswaWidget() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection('tugas')
+          .orderBy("no")
+          .where("kecakapan",
+              isEqualTo: userMap["kecakapan"].toString().toLowerCase())
+          .where("tingkat",
+              isEqualTo: userMap["tingkat"].toString().toLowerCase())
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData && !_isLoading) {
+          return ListView.builder(
+            reverse: false,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            itemCount: snapshot.data?.docs.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> map =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              if (map["no"] != 1 ||
+                  map["kategori"].contains(userMap["agama"]!.toLowerCase())) {
+                kategori = (map["kategori"] as List)
+                    .map((item) => item as String)
+                    .toList();
+                return CardTugas(
+                  i: widget.i,
+                  uid: map["uid"],
+                  title: map["nama"],
+                  iconData: map['kategori'].contains("outdoor")
+                      ? Icons.hiking
+                      : Icons.edit,
+                  iconColor: map['kategori'].contains("outdoor")
+                      ? Colors.white
+                      : Color(0xFF395144),
+                  iconBgColor: map['kategori'].contains("outdoor")
+                      ? Color(0xff00B8A9)
+                      : Colors.white,
+                  check: check(map["uid"]),
+                  kategori: kategori,
+                  pembina: pembina,
+                );
+              } else {
+                return Container();
+              }
+            },
+          );
+        } else {
+          return LoadingPage();
+        }
+      },
+    );
+  }
+
+  StreamBuilder<QuerySnapshot<Object?>> PembinaWidget() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection('pembina')
+          .doc(_auth.currentUser!.uid)
+          .collection("pending")
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData && !_isLoading) {
+          return ListView.builder(
+            reverse: false,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            itemCount: snapshot.data?.docs.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> map =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              return CardCek(
+                  i: widget.i,
+                  uid: snapshot.data!.docs[index].id,
+                  siswa: siswaMap!,
+                  tugas: tugasMap!,
+                  sekolah: sekolah,
+                  iconData: tugasMap!['kategori'].contains("outdoor")
+                      ? Icons.hiking
+                      : Icons.edit,
+                  iconColor: tugasMap!['kategori'].contains("outdoor")
+                      ? Colors.white
+                      : Color(0xFF395144),
+                  iconBgColor: tugasMap!['kategori'].contains("outdoor")
+                      ? Color(0xff00B8A9)
+                      : Colors.white,
+                  kategori: kategori);
+            },
+          );
+        } else {
+          return LoadingPage();
+        }
+      },
+    );
+  }
+
   Future<void> init() async {
     await _firestore
         .collection("siswa")
@@ -200,6 +272,7 @@ class _ListTugasState extends State<ListTugas> {
         .get()
         .then((value) {
       userMap["kecakapan"] = value.data()!["kecakapan"];
+      userMap["tingkat"] = value.data()!["tingkat"];
       userMap["agama"] = value.data()!["agama"];
     });
     init2().then((value) => setState((() {
@@ -230,6 +303,46 @@ class _ListTugasState extends State<ListTugas> {
       for (var doc in value.docs) {
         pembina[doc.data()["uid"].toString()] = doc.data()["nama"].toString();
       }
+    });
+  }
+
+  Future<void> initPembina() async {
+    await _firestore
+        .collection("pembina")
+        .doc(_auth.currentUser!.uid)
+        .collection("pending")
+        .get()
+        .then((value) {
+      if (value.size == 0)
+        setState(() {
+          _isLoading = false;
+        });
+      for (var doc in value.docs) {
+        initPembina2(doc).then((value) {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+      }
+    });
+  }
+
+  Future<void> initPembina2(
+      QueryDocumentSnapshot<Map<String, dynamic>> map) async {
+    await _firestore.collection("siswa").doc(map["siswa"]).get().then((value) {
+      siswaMap = value.data()!;
+      _firestore
+          .collection("sekolah")
+          .doc(siswaMap!["sekolah"])
+          .get()
+          .then((value) => sekolah = value.data()!["nama"]);
+    });
+
+    await _firestore.collection("tugas").doc(map["tugas"]).get().then((value) {
+      tugasMap = value.data()!;
+      kategori = (tugasMap!["kategori"] as List)
+          .map((item) => item as String)
+          .toList();
     });
   }
 

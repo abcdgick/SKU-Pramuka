@@ -8,13 +8,15 @@ class PengumumanPage extends StatelessWidget {
   final String foto;
   final String pembuat;
   final String tanggal;
+  final bool isPembina;
   const PengumumanPage(
       {super.key,
       required this.judul,
       required this.detil,
       required this.foto,
       required this.pembuat,
-      required this.tanggal});
+      required this.tanggal,
+      required this.isPembina});
 
   @override
   Widget build(BuildContext context) {

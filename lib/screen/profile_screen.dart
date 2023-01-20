@@ -15,18 +15,22 @@ import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:uuid/uuid.dart';
 
+int index = 0;
+var tag = "dis";
+
 final List<Widget> _children = [
-  HomePage(),
-  ListTugas(),
+  HomePage(i: index),
+  ListTugas(i: index),
   ProfilePage(
     isPembina: false,
+    i: index,
   )
 ];
-var tag;
 
 class ProfilePage extends StatefulWidget {
+  final int i;
   final bool isPembina;
-  const ProfilePage({super.key, required this.isPembina});
+  const ProfilePage({super.key, required this.isPembina, required this.i});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -36,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
   Map<String, dynamic>? userMap;
   AuthClass authClass = AuthClass();
+  String db = "siswa";
   String kota = "";
   String kecamatan = "";
   String sekolah = "";
@@ -49,7 +54,20 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    init();
+    switch (widget.i) {
+      case 0:
+        init();
+        break;
+      case 1:
+        db = "pembina";
+        initPembina();
+        break;
+      case 2:
+        db = "admin";
+        break;
+      default:
+    }
+    index = widget.i;
   }
 
   @override
@@ -83,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ? const LoadingPage()
           : StreamBuilder<DocumentSnapshot>(
               stream: _firestore
-                  .collection("siswa")
+                  .collection(db)
                   .doc(_auth.currentUser!.uid)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -105,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   builder: (_) => SaveImage(
                                     imageUrl: snapshot.data!['profile'],
                                     tag: tag,
-                                    collection: "siswa",
+                                    collection: db,
                                     doc: _auth.currentUser!.uid,
                                   ),
                                 ),
@@ -128,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           tile(
                             const Icon(Icons.person),
-                            "Nama",
+                            "Name",
                             snapshot.data!['name'],
                           ),
                           const SizedBox(
@@ -142,60 +160,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          tile(
-                            const Icon(Icons.event),
-                            "Tanggal Lahir",
-                            DateFormat("d MMMM yyyy", "id_ID").format(
-                                (snapshot.data!['tl'] as Timestamp).toDate()),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.elderly),
-                            "Tingkat",
-                            snapshot.data!['tingkat'],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.info),
-                            "Kecakapan",
-                            snapshot.data!['kecakapan'],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.school),
-                            "Sekolah",
-                            sekolah,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.numbers),
-                            "Nomor Gudep",
-                            gudep,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.location_on),
-                            "Kecamatan",
-                            kecamatan,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          tile(
-                            const Icon(Icons.location_city),
-                            "Kota",
-                            kota,
-                          ),
+                          widget.i == 0
+                              ? siswaWidget(snapshot)
+                              : lainWidget(snapshot),
                         ],
                       ),
                     ),
@@ -253,6 +220,91 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Column siswaWidget(AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+    return Column(
+      children: [
+        tile(
+          const Icon(Icons.event),
+          "Tanggal Lahir",
+          DateFormat("d MMMM yyyy", "id_ID")
+              .format((snapshot.data!['tl'] as Timestamp).toDate()),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.elderly),
+          "Tingkat",
+          snapshot.data!['tingkat'],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.info),
+          "Kecakapan",
+          snapshot.data!['kecakapan'],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.school),
+          "Sekolah",
+          sekolah,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.numbers),
+          "Nomor Gudep",
+          gudep,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.location_on),
+          "Kecamatan",
+          kecamatan,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.location_city),
+          "Kota",
+          kota,
+        ),
+      ],
+    );
+  }
+
+  Column lainWidget(AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+    return Column(
+      children: [
+        widget.i == 1
+            ? tile(const Icon(Icons.school), "Sekolah", sekolah)
+            : Container(),
+        widget.i == 1 ? const SizedBox(height: 20) : Container(),
+        tile(
+          const Icon(Icons.location_on),
+          "Kecamatan",
+          snapshot.data!["kecamatan"],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        tile(
+          const Icon(Icons.location_city),
+          "Kota",
+          snapshot.data!["kota"],
+        ),
+      ],
+    );
+  }
+
   void onTap(int index) {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => _children[index]));
@@ -280,7 +332,6 @@ class _ProfilePageState extends State<ProfilePage> {
       kota = value.data()!["kota"];
       kecamatan = value.data()!["kecamatan"];
       sekolah = value.data()!["nama"];
-      print(sekolah);
 
       if (userMap!["gender"] == "Laki-laki") {
         gudep = value.data()!["gudep putra"];
@@ -294,9 +345,31 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void initPembina() async {
+    List<String> tmp = [];
+
+    _firestore
+        .collection("pembina")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) async {
+      tmp = (value.data()!["sekolah"] as List)
+          .map((item) => item as String)
+          .toList();
+      sekolah = "";
+      for (var s in tmp) {
+        await _firestore.collection("sekolah").doc(s).get().then(
+            (value) => sekolah = "$sekolah•   ${value.data()!['nama']}\n");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   void save(String dis) async {
     await _firestore
-        .collection("siswa")
+        .collection(db)
         .doc(_auth.currentUser!.uid)
         .update({dis.toLowerCase(): textEditingController.text});
 
@@ -312,42 +385,79 @@ class _ProfilePageState extends State<ProfilePage> {
       subtitle: Text(subs,
           style: const TextStyle(
               color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold)),
-      // trailing: IconButton(
-      //   icon: const Icon(
-      //     Icons.edit,
-      //     color: Colors.grey,
-      //   ),
-      //   onPressed: () {
-      //     textEditingController.text = subs;
-      //     showDialog(
-      //       context: context,
-      //       builder: (context) => AlertDialog(
-      //         title: Text("Edit $title anda"),
-      //         content: TextFormField(
-      //           controller: textEditingController,
-      //           decoration: InputDecoration(hintText: "$title Anda"),
-      //         ),
-      //         actions: <Widget>[
-      //           TextButton(
-      //             onPressed: () {
-      //               Navigator.pop(context);
-      //             },
-      //             child: const Text("BATAL"),
-      //           ),
-      //           TextButton(
-      //               onPressed: () {
-      //                 Navigator.pop(context);
-      //                 if (textEditingController.text != subs &&
-      //                     textEditingController.text != "") save(title);
-      //               },
-      //               child: const Text("SIMPAN"))
-      //         ],
-      //       ),
-      //     );
-      //   },
-      // ),
+      trailing: widget.i > 0 && title != "Email"
+          ? IconButton(
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                textEditingController.text = subs;
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Edit $title anda"),
+                    content: TextFormField(
+                      controller: textEditingController,
+                      decoration: InputDecoration(hintText: "$title Anda"),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("BATAL"),
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            if (textEditingController.text != subs &&
+                                textEditingController.text != "") save(title);
+                          },
+                          child: const Text("SIMPAN"))
+                    ],
+                  ),
+                );
+              },
+            )
+          : SizedBox(),
     );
   }
+
+  Widget daftarSekolah(List<String> texts) {
+    var widgetList = <Widget>[];
+    widgetList.add(
+      const Text("Daftar Sekolah",
+          style: TextStyle(color: Colors.black, fontSize: 15)),
+    );
+    widgetList.add(SizedBox(height: 10));
+    for (var text in texts) {
+      widgetList.add(unorderedListItem(text));
+      widgetList.add(SizedBox(
+        height: 5,
+      ));
+    }
+
+    return Column(children: widgetList);
+  }
+
+  Widget unorderedListItem(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text("• "),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> ambilSekolah(List<String> listSekolah) async {}
 }
 
 class SaveImage extends StatelessWidget {
@@ -467,7 +577,7 @@ class SaveImage extends StatelessWidget {
     var uploadTask = await ref.putFile(imageFile!).then((p0) async {
       String imageUrl = await ref.getDownloadURL();
       await _firestore
-          .collection("siswa")
+          .collection(collection)
           .doc(doc)
           .update({"profile": imageUrl}).then((value) {
         return true;

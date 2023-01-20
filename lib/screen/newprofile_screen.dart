@@ -772,7 +772,8 @@ class _NewProfileState extends State<NewProfile> {
                   umur,
                   tingkat.text,
                   kecakapan,
-                  selectedAgama!)
+                  selectedAgama!,
+                  selectedKecamatan!)
               .then((value) => setState(() {
                     _isLoading = false;
                   }));

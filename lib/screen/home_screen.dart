@@ -1,51 +1,71 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:sku_pramuka/screen/extra/buat_pengumuman.dart';
 import 'package:sku_pramuka/screen/extra/compass.dart';
+import 'package:sku_pramuka/screen/extra/list_pembina.dart';
+import 'package:sku_pramuka/screen/extra/list_siswa.dart';
 import 'package:sku_pramuka/screen/extra/pramuka_icons.dart';
 import 'package:sku_pramuka/screen/extra/teks.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
 import 'package:sku_pramuka/screen/pengumuman_screen.dart';
 import 'package:sku_pramuka/screen/profile_screen.dart';
-import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
-import 'package:sku_pramuka/widgets/card_tugas.dart';
+
+int index = 0;
 
 final List<Widget> _children = [
-  HomePage(),
-  ListTugas(),
+  HomePage(i: index),
+  ListTugas(i: index),
   ProfilePage(
     isPembina: false,
+    i: index,
   )
 ];
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int i;
+  const HomePage({super.key, required this.i});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String db = "siswa";
+  int? jumlahPending;
   bool _isLoading = true;
   AuthClass authClass = AuthClass();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   List<Map<String, String>> listPengumuman = [{}];
   List<Widget> imageSliders = [];
+  Map<String, dynamic>? listSiswa;
+  Map<String, dynamic>? listPembina;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.i > 0) {
+      index = widget.i;
+      switch (widget.i) {
+        case 1:
+          db = "pembina";
+          break;
+        case 2:
+          db = "admin";
+          break;
+        default:
+          db = "siswa";
+          break;
+      }
+    }
     setState(() {
+      listPengumuman.clear();
       _isLoading = true;
     });
   }
@@ -72,12 +92,30 @@ class _HomePageState extends State<HomePage> {
         actions: [
           StreamBuilder(
             stream: _firestore
-                .collection("siswa")
+                .collection(db)
                 .doc(_auth.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (_isLoading) init(snapshot.data!["sekolah"]);
+                if (_isLoading) {
+                  switch (widget.i) {
+                    case 0:
+                      init(snapshot.data!["sekolah"])
+                          .then((value) => initCarousel());
+                      break;
+                    case 1:
+                      List<String> listSekolah =
+                          (snapshot.data!["sekolah"] as List)
+                              .map((item) => item as String)
+                              .toList();
+                      wrapInit(listSekolah).then((value) => initCarousel());
+                      break;
+                    case 2:
+                      initAdmin();
+                      break;
+                    default:
+                  }
+                }
                 return Row(
                   children: [
                     ClipOval(
@@ -94,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 );
-              } else
+              } else {
                 return Row(
                   children: [
                     CircleAvatar(
@@ -105,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 );
+              }
             },
           ),
         ],
@@ -144,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 20.0, horizontal: 10.0),
                                     height: 200.0,
-                                    child: info(),
+                                    child: widget.i == 2 ? infoAdmin() : info(),
                                   ),
                                 ],
                               )),
@@ -156,124 +195,11 @@ class _HomePageState extends State<HomePage> {
                         horizontal: 30.0,
                         vertical: 30,
                       ),
-                      child: Wrap(
-                        runSpacing: 30,
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TeksPage(
-                                  index: 0,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Pramuka.pancasila,
-                                  color: Color.fromARGB(255, 92, 170, 97),
-                                  size: 50,
-                                ),
-                                Text(
-                                  "Pancasila",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                          InkWell(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TeksPage(
-                                  index: 1,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  color: Color.fromARGB(255, 92, 170, 97),
-                                  size: 50,
-                                ),
-                                Text(
-                                  "Trisatya",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                          InkWell(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TeksPage(
-                                  index: 2,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.menu_book,
-                                  color: Color.fromARGB(255, 92, 170, 97),
-                                  size: 50,
-                                ),
-                                Text(
-                                  "Dasa Dharma",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 30),
-                          InkWell(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => KompasPage(),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.explore,
-                                  color: Color.fromARGB(255, 92, 170, 97),
-                                  size: 50,
-                                ),
-                                Text(
-                                  "Kompas",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: widget.i == 0
+                          ? SiswaWidget(context)
+                          : widget.i == 1
+                              ? PembinaWidget(context)
+                              : AdminWidget(context),
                     ),
                   ],
                 ),
@@ -328,14 +254,322 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void init(String sekolah) async {
+  Wrap SiswaWidget(BuildContext context) {
+    return Wrap(
+      runSpacing: 30,
+      children: [
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeksPage(
+                index: 0,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Pramuka.pancasila,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Pancasila",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeksPage(
+                index: 1,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.star,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Trisatya",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeksPage(
+                index: 2,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.menu_book,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Dasa Dharma",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => KompasPage(),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.explore,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Kompas",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Wrap PembinaWidget(BuildContext context) {
+    return Wrap(
+      runSpacing: 30,
+      children: [
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListSiswa(
+                isAdmin: false,
+                siswaBaru: false,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.groups,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Daftar Siswa",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BuatPengumuman(),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.campaign,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Buat Pengumuman",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => KompasPage(),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.explore,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Kompas",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Wrap AdminWidget(BuildContext context) {
+    return Wrap(
+      runSpacing: 30,
+      children: [
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListSiswa(
+                isAdmin: true,
+                siswaBaru: false,
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.groups,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Daftar Siswa",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListPembina(),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.star,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Daftar Pembina",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 30),
+        InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => KompasPage(),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.explore,
+                color: Color.fromARGB(255, 92, 170, 97),
+                size: 50,
+              ),
+              Text(
+                "Kompas",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> wrapInit(List<String> listSekolah) async {
+    for (String sekolah in listSekolah) {
+      await init(sekolah);
+    }
+  }
+
+  Future<void> init(String sekolah) async {
     await _firestore
         .collection("pengumuman")
         .where("sekolah", isEqualTo: sekolah)
         .orderBy("tipe", descending: false)
         .get()
         .then((value) {
-      listPengumuman.clear();
       for (var doc in value.docs) {
         listPengumuman.add({
           "judul": doc["judul"],
@@ -348,7 +582,9 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+  }
 
+  void initCarousel() {
     imageSliders = listPengumuman
         .map((item) => Container(
               margin: EdgeInsets.all(5.0),
@@ -362,6 +598,7 @@ class _HomePageState extends State<HomePage> {
                       foto: item["foto"]!,
                       pembuat: item["pembuat"]!,
                       tanggal: item["tanggal"]!,
+                      isPembina: (widget.i == 2),
                     ),
                   ),
                 ),
@@ -417,9 +654,29 @@ class _HomePageState extends State<HomePage> {
             ))
         .toList();
 
-    print(imageSliders);
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  void initAdmin() async {
+    await _firestore
+        .collection("admin")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      listSiswa = {};
+      List<String> tmpSiswa = (value.data()!["siswabaru"] as List)
+          .map((item) => item as String)
+          .toList();
+
+      for (var siswa in tmpSiswa) {
+        _firestore
+            .collection("siswa")
+            .doc(siswa)
+            .get()
+            .then((value) => listSiswa![siswa] = value.data());
+      }
     });
   }
 
@@ -437,65 +694,67 @@ class _HomePageState extends State<HomePage> {
             initialPage: 0,
             autoPlay: true),
         items: imageSliders);
-    // return ListView.builder(
-    //     itemCount: listPengumuman.length,
-    //     scrollDirection: Axis.horizontal,
-    //     itemBuilder: ((context, index) {
-    //       return Center(
-    //         child: Container(
-    //           padding: EdgeInsets.symmetric(horizontal: 3),
-    //           width: 300,
-    //           height: 180,
-    //           child: InkWell(
-    //             onTap: () => Navigator.push(
-    //               context,
-    //               MaterialPageRoute(
-    //                 builder: (context) => PengumumanPage(
-    //                   judul: listPengumuman[index]["judul"]!,
-    //                   detil: listPengumuman[index]["detil"]!,
-    //                   foto: listPengumuman[index]["foto"] ?? "",
-    //                   pembuat: listPengumuman[index]["pembuat"]!,
-    //                   tanggal: listPengumuman[index]["tanggal"]!,
-    //                 ),
-    //               ),
-    //             ),
-    //             child: Card(
-    //                 elevation: 7,
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(10.0),
-    //                 ),
-    //                 child: Container(
-    //                   padding: const EdgeInsets.all(8.0),
-    //                   decoration: BoxDecoration(
-    //                     gradient: LinearGradient(
-    //                       colors: ambilWarna(listPengumuman[index]["tipe"]!),
-    //                     ),
-    //                   ),
-    //                   child: Row(
-    //                     crossAxisAlignment: CrossAxisAlignment.center,
-    //                     mainAxisAlignment: MainAxisAlignment.center,
-    //                     children: [
-    //                       Icon(checkIcon(listPengumuman[index]["tipe"]!),
-    //                           color: Colors.white, size: 70),
-    //                       SizedBox(
-    //                         width: 10,
-    //                       ),
-    //                       Flexible(
-    //                         child:
-    //                             Text(listPengumuman[index]["judul"] ?? "Test",
-    //                                 style: TextStyle(
-    //                                   fontFamily: 'Sono',
-    //                                   color: Colors.white,
-    //                                   fontSize: 20,
-    //                                 )),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 )),
-    //           ),
-    //         ),
-    //       );
-    //     }));
+  }
+
+  Widget infoAdmin() {
+    return ListView.builder(
+        itemCount: 1,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: ((context, index) {
+          return Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 3),
+              width: 300,
+              height: 180,
+              child: InkWell(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ListSiswa(
+                            isAdmin: true,
+                            siswaBaru: true,
+                          )),
+                ),
+                child: Card(
+                    elevation: 7,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 127, 164, 250),
+                            Color.fromARGB(255, 147, 184, 250)
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.info_outline,
+                              color: Colors.white, size: 70),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: Text(
+                                "Terdapat ${listSiswa!.length} siswa baru yang perlu diverifikasi datanya",
+                                style: TextStyle(
+                                  fontFamily: 'Sono',
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                )),
+                          ),
+                        ],
+                      ),
+                    )),
+              ),
+            ),
+          );
+        }));
   }
 
   IconData checkIcon(String tipe) {

@@ -15,18 +15,28 @@ import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class TugasPage extends StatefulWidget {
+  final int i;
   final String uid;
   final String title;
   final String progress;
   final List<String> kategori;
   final Map<String, String> pembina;
-  const TugasPage(
+  String? uidPending;
+  String? uidSiswa;
+  String? namaSiswa;
+  String? sekolah;
+  TugasPage(
       {super.key,
+      required this.i,
       required this.uid,
       required this.title,
       required this.progress,
       required this.kategori,
-      required this.pembina});
+      required this.pembina,
+      this.uidPending,
+      this.uidSiswa,
+      this.namaSiswa,
+      this.sekolah});
 
   @override
   State<TugasPage> createState() => _TugasPageState();
@@ -44,13 +54,16 @@ class _TugasPageState extends State<TugasPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController isiText = TextEditingController();
   String? pengerjaan;
+  String? oleh;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     widget.kategori.contains("outdoor") ? isFoto = true : null;
-    init(widget.progress, widget.pembina);
+    widget.uidPending == null
+        ? init(widget.progress, widget.pembina)
+        : initReview(widget.progress);
   }
 
   @override
@@ -104,10 +117,7 @@ class _TugasPageState extends State<TugasPage> {
                             check(widget.progress),
                           ),
                           SizedBox(height: 25),
-                          proses ? label("Dikerjakan pada") : Container(),
-                          proses ? SizedBox(height: 12) : Container(),
-                          proses ? dilaksanakan() : Container(),
-                          proses ? SizedBox(height: 25) : Container(),
+                          widget.i == 0 ? siswaWidget1() : pembinaWidget1(),
                           label("Kategori"),
                           SizedBox(height: 12),
                           Wrap(
@@ -130,12 +140,7 @@ class _TugasPageState extends State<TugasPage> {
                               : label("Text Jawaban"),
                           SizedBox(height: 15),
                           isFoto ? foto() : text(),
-                          !proses ? SizedBox(height: 25) : Container(),
-                          !proses ? label("Pembina") : Container(),
-                          !proses ? SizedBox(height: 12) : Container(),
-                          !proses ? cariPembina() : Container(),
-                          !proses ? SizedBox(height: 40) : Container(),
-                          !proses ? button() : Container(),
+                          widget.i == 0 ? siswaWidget2() : pembinaWidget2(),
                           SizedBox(height: 20),
                         ],
                       ),
@@ -145,6 +150,73 @@ class _TugasPageState extends State<TugasPage> {
               ),
             ),
           );
+  }
+
+  Widget siswaWidget1() {
+    if (proses) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          label("Dikerjakan pada"),
+          SizedBox(height: 12),
+          dilaksanakan(),
+          SizedBox(height: 25),
+        ],
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget siswaWidget2() {
+    if (!proses) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 25),
+          label("Pembina"),
+          SizedBox(height: 12),
+          cariPembina(),
+          SizedBox(height: 40),
+          button()
+        ],
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget pembinaWidget1() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label("Dikerjakan oleh"),
+        SizedBox(height: 12),
+        Text(
+          "$oleh\npada $pengerjaan",
+          style: TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        SizedBox(
+          height: 25,
+        )
+      ],
+    );
+  }
+
+  Widget pembinaWidget2() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: 40),
+        buttonPembina(true),
+        SizedBox(height: 20),
+        buttonPembina(false),
+      ],
+    );
   }
 
   Widget label(String label) {
@@ -412,7 +484,9 @@ class _TugasPageState extends State<TugasPage> {
           }).then((value) => Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const ListTugas()),
+                      builder: (BuildContext context) => ListTugas(
+                            i: widget.i,
+                          )),
                   ModalRoute.withName('/')));
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -448,16 +522,67 @@ class _TugasPageState extends State<TugasPage> {
     );
   }
 
+  Widget buttonPembina(bool acc) {
+    String progress = acc ? "diterima" : "ditolak";
+    return InkWell(
+      onTap: () async {
+        await _firestore
+            .collection("siswa")
+            .doc(widget.uidSiswa)
+            .collection("progress")
+            .where("tugas", isEqualTo: widget.uid)
+            .get()
+            .then((value) =>
+                value.docs[0].reference.update({"progress": progress}));
+
+        await _firestore
+            .collection("pembina")
+            .doc(_auth.currentUser!.uid)
+            .collection("pending")
+            .doc(widget.uidPending)
+            .delete()
+            .then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListTugas(
+                          i: widget.i,
+                        )),
+                ModalRoute.withName('/')));
+      },
+      child: Container(
+        height: 56,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: acc
+                ? [Color(0xFF1A2980), Color(0xFF26D0CE)]
+                : [Color(0xffeb3941), Color(0xffe2373f)],
+          ),
+        ),
+        child: Center(
+          child: Text(
+            acc ? "Terima" : "Tolak",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget dilaksanakan() {
     return Text(
       "$pengerjaan - $pembina",
       style: TextStyle(
-        color: Colors.blueGrey,
+        color: Colors.black12,
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
     );
-    ;
   }
 
   void init(String progress, Map<String, String> pembina) async {
@@ -473,10 +598,11 @@ class _TugasPageState extends State<TugasPage> {
           .where("tugas", isEqualTo: widget.uid)
           .get()
           .then((value) async {
-        if (isFoto)
+        if (isFoto) {
           inet = value.docs[0].data()["gambar"];
-        else
+        } else {
           isiText.text = value.docs[0].data()["teks"].toString();
+        }
 
         pengerjaan = DateFormat("EEEE, d MMMM yyyy", "id_ID")
             .format(value.docs[0].data()['tanggal'].toDate());
@@ -497,6 +623,34 @@ class _TugasPageState extends State<TugasPage> {
       });
       proses = false;
     }
+  }
+
+  void initReview(String progress) async {
+    setState(() {
+      _isLoading = true;
+    });
+    proses = true;
+    await _firestore
+        .collection("pembina")
+        .doc(_auth.currentUser!.uid)
+        .collection("pending")
+        .where("tugas", isEqualTo: widget.uid)
+        .get()
+        .then((value) async {
+      if (isFoto) {
+        inet = value.docs[0].data()["gambar"];
+      } else {
+        isiText.text = value.docs[0].data()["teks"].toString();
+      }
+
+      pengerjaan = DateFormat("EEEE, d MMMM yyyy", "id_ID")
+          .format(value.docs[0].data()['tanggal'].toDate());
+
+      oleh = "${widget.namaSiswa} - ${widget.sekolah}";
+    });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   int check(String progress) {
