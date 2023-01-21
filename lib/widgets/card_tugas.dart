@@ -6,6 +6,7 @@ import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardTugas extends StatelessWidget {
   final int i;
+  final int no;
   final String uid;
   final String title;
   final IconData iconData;
@@ -17,6 +18,7 @@ class CardTugas extends StatelessWidget {
 
   CardTugas(
       {super.key,
+      required this.no,
       required this.i,
       required this.uid,
       required this.title,
@@ -42,6 +44,7 @@ class CardTugas extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TugasPage(
+                      no: no,
                       i: i,
                       uid: uid,
                       title: title,
@@ -70,21 +73,25 @@ class CardTugas extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 15.0),
+                          vertical: 10.0, horizontal: 12.0),
                       child: Row(
                         children: [
                           Container(
-                            height: 33,
-                            width: 36,
-                            decoration: BoxDecoration(
-                              color: iconBgColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              iconData,
-                              color: iconColor,
-                            ),
-                          ),
+                              height: 30,
+                              width: 33,
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                no.toString(),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ))),
                           SizedBox(
                             width: 15,
                           ),
@@ -97,6 +104,18 @@ class CardTugas extends StatelessWidget {
                                   letterSpacing: 1,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black87),
+                            ),
+                          ),
+                          Container(
+                            height: 33,
+                            width: 36,
+                            decoration: BoxDecoration(
+                              color: iconBgColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              iconData,
+                              color: iconColor,
                             ),
                           ),
                         ],

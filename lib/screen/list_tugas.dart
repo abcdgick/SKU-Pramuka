@@ -52,6 +52,7 @@ class _ListTugasState extends State<ListTugas> {
     // TODO: implement initState
     super.initState();
     _isLoading = true;
+    index = widget.i;
     switch (widget.i) {
       case 0:
         db = "siswa";
@@ -63,7 +64,7 @@ class _ListTugasState extends State<ListTugas> {
         break;
       default:
     }
-    index = widget.i;
+    print(widget.i);
   }
 
   @override
@@ -197,6 +198,7 @@ class _ListTugasState extends State<ListTugas> {
                     .toList();
                 return CardTugas(
                   i: widget.i,
+                  no: map["no"],
                   uid: map["uid"],
                   title: map["nama"],
                   iconData: map['kategori'].contains("outdoor")
@@ -241,6 +243,7 @@ class _ListTugasState extends State<ListTugas> {
               Map<String, dynamic> map =
                   snapshot.data!.docs[index].data() as Map<String, dynamic>;
               return CardCek(
+                  no: tugasMap!["no"],
                   i: widget.i,
                   uid: snapshot.data!.docs[index].id,
                   siswa: siswaMap!,

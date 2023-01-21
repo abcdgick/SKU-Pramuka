@@ -385,7 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
       subtitle: Text(subs,
           style: const TextStyle(
               color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold)),
-      trailing: widget.i > 0 && title != "Email"
+      trailing: widget.i > 0 && title == "Name"
           ? IconButton(
               icon: const Icon(
                 Icons.edit,
@@ -482,37 +482,38 @@ class SaveImage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        centerTitle: true,
+        title: Text(
+          "Gambar Profile",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(
-              Icons.camera_alt_outlined,
+              Icons.edit,
               color: Colors.white,
             ),
             onPressed: () async {
-              if (await takeImage(context)) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Gambar Profile Berhasil Diubah"),
-                  ),
-                );
-              }
-              Navigator.pop(context);
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.image_outlined,
-              color: Colors.white,
-            ),
-            onPressed: () async {
-              if (await pickImage(context)) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Gambar Profile Berhasil Diubah"),
-                  ),
-                );
-              }
-              Navigator.pop(context);
+              final source = await showImageSource(context);
+
+              if (source == null) return;
+              await pickImage(source, context).then((value) {
+                // if (value) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(
+                //       content: Text("Gambar profile berhasil diubah"),
+                //     ),
+                //   );
+                //   Navigator.pop(context);
+                // }
+                Navigator.pop(context);
+              });
             },
           ),
         ],
@@ -529,40 +530,83 @@ class SaveImage extends StatelessWidget {
     );
   }
 
-  Future<bool> pickImage(BuildContext context) async {
-    try {
-      await ImagePicker()
-          .pickImage(source: ImageSource.gallery, imageQuality: 80)
-          .then((value) async {
-        if (value != null) {
-          imageFile = File(value.path);
-          return uploadImage();
-        }
-      });
-    } on PlatformException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Gagal mengambil gambar dari galeri: $e"),
-        ),
-      );
-    }
-    return false;
+  // Future<bool> pickImage(BuildContext context) async {
+  //   try {
+  //     await ImagePicker()
+  //         .pickImage(source: ImageSource.gallery, imageQuality: 80)
+  //         .then((value) async {
+  //       if (value != null) {
+  //         imageFile = File(value.path);
+  //         return uploadImage();
+  //       }
+  //     });
+  //   } on PlatformException catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text("Gagal mengambil gambar dari galeri: $e"),
+  //       ),
+  //     );
+  //   }
+  //   return false;
+  // }
+
+  // Future<bool> takeImage(BuildContext context) async {
+  //   try {
+  //     await ImagePicker()
+  //         .pickImage(source: ImageSource.camera, imageQuality: 80)
+  //         .then((value) async {
+  //       if (value != null) {
+  //         imageFile = File(value.path);
+  //         return uploadImage();
+  //       }
+  //     });
+  //   } on PlatformException catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text("Gagal mengambil gambar dari kamera: $e"),
+  //       ),
+  //     );
+  //   }
+  //   return false;
+  // }
+
+  Future<ImageSource?> showImageSource(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: ((context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("Camera"),
+                onTap: () => Navigator.of(context).pop(ImageSource.camera),
+              ),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text("Gallery"),
+                onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+              ),
+            ],
+          )),
+    );
   }
 
-  Future<bool> takeImage(BuildContext context) async {
+  Future<bool> pickImage(ImageSource source, BuildContext context) async {
     try {
       await ImagePicker()
-          .pickImage(source: ImageSource.camera, imageQuality: 80)
+          .pickImage(source: source, imageQuality: 80)
           .then((value) async {
         if (value != null) {
           imageFile = File(value.path);
-          return uploadImage();
+          return await uploadImage();
+        } else {
+          return false;
         }
       });
     } on PlatformException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Gagal mengambil gambar dari kamera: $e"),
+          content: Text("Gagal mengambil gambar: $e"),
         ),
       );
     }
@@ -580,6 +624,7 @@ class SaveImage extends StatelessWidget {
           .collection(collection)
           .doc(doc)
           .update({"profile": imageUrl}).then((value) {
+        print("True 3");
         return true;
       });
     });

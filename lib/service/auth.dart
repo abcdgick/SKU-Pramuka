@@ -197,7 +197,7 @@ class AuthClass {
           .where('email', isEqualTo: userCredential.user!.email!)
           .get();
 
-      if (query.docs.length == 0) {
+      if (query.docs.isEmpty) {
         i = 1;
         query = await FirebaseFirestore.instance
             .collection('pembina')
@@ -205,7 +205,7 @@ class AuthClass {
             .get();
       }
 
-      if (query.docs.length == 0) {
+      if (query.docs.isEmpty) {
         i = 2;
         query = await FirebaseFirestore.instance
             .collection('admin')

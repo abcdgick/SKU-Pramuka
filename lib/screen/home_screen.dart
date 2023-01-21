@@ -50,20 +50,22 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.i > 0) {
-      index = widget.i;
-      switch (widget.i) {
-        case 1:
-          db = "pembina";
-          break;
-        case 2:
-          db = "admin";
-          break;
-        default:
-          db = "siswa";
-          break;
-      }
+    index = widget.i;
+    switch (widget.i) {
+      case 0:
+        db = "siswa";
+        break;
+      case 1:
+        db = "pembina";
+        break;
+      case 2:
+        db = "admin";
+        break;
+      default:
+        db = "siswa";
+        break;
     }
+    print(index);
     setState(() {
       listPengumuman.clear();
       _isLoading = true;

@@ -3,16 +3,16 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:uuid/uuid.dart';
+
+var tag = "foto";
+File? file;
 
 class TugasPage extends StatefulWidget {
   final int i;
@@ -21,12 +21,14 @@ class TugasPage extends StatefulWidget {
   final String progress;
   final List<String> kategori;
   final Map<String, String> pembina;
+  final int no;
   String? uidPending;
   String? uidSiswa;
   String? namaSiswa;
   String? sekolah;
   TugasPage(
       {super.key,
+      required this.no,
       required this.i,
       required this.uid,
       required this.title,
@@ -46,7 +48,6 @@ class _TugasPageState extends State<TugasPage> {
   String inet = "";
   String? pembina;
   List<String>? listPembina;
-  File? file;
   bool isFoto = false;
   bool proses = false;
   bool _isLoading = false;
@@ -73,8 +74,12 @@ class _TugasPageState extends State<TugasPage> {
         : Scaffold(
             appBar: AppBar(
               backgroundColor: Color.fromARGB(255, 78, 108, 80),
-              title: Text("Tugas",
-                  style: TextStyle(color: Colors.white, fontSize: 24)),
+              title: Text("Tugas ${widget.no}",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  )),
               centerTitle: true,
             ),
             body: Container(
@@ -342,20 +347,32 @@ class _TugasPageState extends State<TugasPage> {
 
   Widget foto() {
     return file != null || proses
-        ? Center(
-            child: proses
-                ? Image.network(
-                    inet,
-                    width: 150,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  )
-                : Image.file(
-                    file!,
-                    width: 150,
-                    height: 200,
-                    fit: BoxFit.cover,
+        ? InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ViewImage(
+                    imageUrl: proses ? inet : null,
+                    proses: proses,
                   ),
+                ),
+              );
+            },
+            child: Center(
+              child: proses
+                  ? Image.network(
+                      inet,
+                      width: 200,
+                      height: 250,
+                      fit: BoxFit.contain,
+                    )
+                  : Image.file(
+                      file!,
+                      width: 200,
+                      height: 250,
+                      fit: BoxFit.contain,
+                    ),
+            ),
           )
         : Center(
             child: ElevatedButton(
@@ -578,7 +595,7 @@ class _TugasPageState extends State<TugasPage> {
     return Text(
       "$pengerjaan - $pembina",
       style: TextStyle(
-        color: Colors.black12,
+        color: Colors.black54,
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
@@ -666,5 +683,105 @@ class _TugasPageState extends State<TugasPage> {
       default:
         return 0xFF000000;
     }
+  }
+}
+
+class ViewImage extends StatelessWidget {
+  String? imageUrl;
+  final bool proses;
+
+  ViewImage({required this.proses, this.imageUrl, Key? key}) : super(key: key);
+
+  File? imageFile;
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        centerTitle: true,
+        title: Text(
+          "Gambar Tugas",
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
+        actions: <Widget>[
+          file != null
+              ? IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {
+                    final source = await showImageSource(context);
+
+                    if (source == null) return;
+                    if (await pickImage(source, context)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Gambar berhasil diubah"),
+                        ),
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                )
+              : Container(),
+        ],
+      ),
+      body: Hero(
+        tag: tag,
+        child: Container(
+          height: size.height,
+          width: size.width,
+          color: Colors.black,
+          child: proses ? Image.network(imageUrl!) : Image.file(file!),
+        ),
+      ),
+    );
+  }
+
+  Future<ImageSource?> showImageSource(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: ((context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("Camera"),
+                onTap: () => Navigator.of(context).pop(ImageSource.camera),
+              ),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text("Gallery"),
+                onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+              ),
+            ],
+          )),
+    );
+  }
+
+  Future<bool> pickImage(ImageSource source, BuildContext context) async {
+    try {
+      await ImagePicker().pickImage(source: source).then((value) async {
+        if (value != null) {
+          file = File(value.path);
+          return true;
+        }
+      });
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal mengambil gambar: $e"),
+        ),
+      );
+    }
+    return false;
   }
 }

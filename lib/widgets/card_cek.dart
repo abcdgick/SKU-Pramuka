@@ -9,6 +9,7 @@ import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardCek extends StatelessWidget {
+  final int no;
   final int i;
   final String uid;
   final Map<String, dynamic> siswa;
@@ -21,6 +22,7 @@ class CardCek extends StatelessWidget {
 
   CardCek(
       {super.key,
+      required this.no,
       required this.i,
       required this.uid,
       required this.siswa,
@@ -46,6 +48,7 @@ class CardCek extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TugasPage(
+                    no: no,
                     i: i,
                     uid: tugas["uid"],
                     title: tugas["nama"],
@@ -84,17 +87,21 @@ class CardCek extends StatelessWidget {
                       child: Row(
                         children: [
                           Container(
-                            height: 33,
-                            width: 36,
-                            decoration: BoxDecoration(
-                              color: iconBgColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              iconData,
-                              color: iconColor,
-                            ),
-                          ),
+                              height: 30,
+                              width: 33,
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                no.toString(),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ))),
                           SizedBox(
                             width: 15,
                           ),
@@ -119,6 +126,18 @@ class CardCek extends StatelessWidget {
                               ),
                             ],
                           )),
+                          Container(
+                            height: 33,
+                            width: 36,
+                            decoration: BoxDecoration(
+                              color: iconBgColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              iconData,
+                              color: iconColor,
+                            ),
+                          ),
                         ],
                       ),
                     ),
