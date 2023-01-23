@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/list_tugas.dart';
@@ -452,6 +453,10 @@ class _TugasPageState extends State<TugasPage> {
   Widget button() {
     return InkWell(
       onTap: () async {
+        EasyLoading.show(
+            status: "Loading...",
+            dismissOnTap: false,
+            maskType: EasyLoadingMaskType.black);
         try {
           String fileName = Uuid().v1();
           String key = "";
@@ -498,14 +503,23 @@ class _TugasPageState extends State<TugasPage> {
             "tanggal": FieldValue.serverTimestamp(),
             "tugas": widget.uid,
             key: value
-          }).then((value) => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute<void>(
-                      builder: (BuildContext context) => ListTugas(
-                            i: widget.i,
-                          )),
-                  ModalRoute.withName('/')));
+          }).then((value) {
+            EasyLoading.dismiss();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Tunggu keputusan pembina $pembina yaa"),
+              ),
+            );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListTugas(
+                          i: widget.i,
+                        )),
+                ModalRoute.withName('/'));
+          });
         } catch (e) {
+          EasyLoading.dismiss();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("Kerjakan tugasnya dengan benar ya"),

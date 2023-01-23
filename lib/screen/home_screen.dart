@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> {
         db = "siswa";
         break;
     }
-    print(index);
     setState(() {
       listPengumuman.clear();
       _isLoading = true;
@@ -185,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 20.0, horizontal: 10.0),
                                     height: 200.0,
-                                    child: widget.i == 2 ? infoAdmin() : info(),
+                                    child: info(),
                                   ),
                                 ],
                               )),
@@ -574,6 +573,7 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       for (var doc in value.docs) {
         listPengumuman.add({
+          "uid": doc.id,
           "judul": doc["judul"],
           "detil": doc["detil"],
           "tipe": doc["tipe"],
@@ -595,12 +595,13 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PengumumanPage(
+                      uid: item["uid"]!,
                       judul: item["judul"]!,
                       detil: item["detil"]!,
                       foto: item["foto"]!,
                       pembuat: item["pembuat"]!,
                       tanggal: item["tanggal"]!,
-                      isPembina: (widget.i == 2),
+                      isPembina: (widget.i == 1),
                     ),
                   ),
                 ),
@@ -696,67 +697,6 @@ class _HomePageState extends State<HomePage> {
             initialPage: 0,
             autoPlay: true),
         items: imageSliders);
-  }
-
-  Widget infoAdmin() {
-    return ListView.builder(
-        itemCount: 1,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: ((context, index) {
-          return Center(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 3),
-              width: 300,
-              height: 180,
-              child: InkWell(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ListSiswa(
-                            isAdmin: true,
-                            siswaBaru: true,
-                          )),
-                ),
-                child: Card(
-                    elevation: 7,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 127, 164, 250),
-                            Color.fromARGB(255, 147, 184, 250)
-                          ],
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.info_outline,
-                              color: Colors.white, size: 70),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Flexible(
-                            child: Text(
-                                "Terdapat ${listSiswa!.length} siswa baru yang perlu diverifikasi datanya",
-                                style: TextStyle(
-                                  fontFamily: 'Sono',
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                )),
-                          ),
-                        ],
-                      ),
-                    )),
-              ),
-            ),
-          );
-        }));
   }
 
   IconData checkIcon(String tipe) {

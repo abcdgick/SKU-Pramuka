@@ -5,6 +5,7 @@ import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sku_pramuka/service/auth.dart';
 
 Future<void> main() async {
@@ -38,6 +39,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Pramuka',
       home: currentPage,
       debugShowCheckedModeBanner: false,
+      builder: EasyLoading.init(),
     );
   }
 

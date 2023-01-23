@@ -53,6 +53,7 @@ dependencies:
   carousel_slider: ^4.2.1
   flutter_compass: ^0.7.0
   permission_handler: ^10.2.0
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:

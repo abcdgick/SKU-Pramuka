@@ -1,22 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sku_pramuka/screen/extra/buat_pengumuman.dart';
+import 'package:sku_pramuka/screen/home_screen.dart';
 
 class PengumumanPage extends StatelessWidget {
+  final String uid;
   final String judul;
   final String detil;
   final String foto;
   final String pembuat;
   final String tanggal;
   final bool isPembina;
-  const PengumumanPage(
+  PengumumanPage(
       {super.key,
+      required this.uid,
       required this.judul,
       required this.detil,
       required this.foto,
       required this.pembuat,
       required this.tanggal,
       required this.isPembina});
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +35,35 @@ class PengumumanPage extends StatelessWidget {
           title: Text("Pengumuman",
               style: TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
+          actions: [
+            isPembina
+                ? PopupMenuButton<String>(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: const Text("Edit"),
+                          onTap: () => WidgetsBinding.instance
+                              .addPostFrameCallback((timeStamp) =>
+                                  Navigator.of(context)
+                                      .pushReplacement(MaterialPageRoute(
+                                          builder: (builder) => BuatPengumuman(
+                                                uid: uid,
+                                                judul: judul,
+                                                detil: detil,
+                                                foto: foto,
+                                              )))),
+                        ),
+                        PopupMenuItem(
+                          child: const Text("Hapus"),
+                          onTap: () => WidgetsBinding.instance
+                              .addPostFrameCallback(
+                                  (timeStamp) => delete(context)),
+                        )
+                      ];
+                    },
+                  )
+                : Container()
+          ],
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
@@ -84,5 +122,53 @@ class PengumumanPage extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  void delete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Hapus Pengumuman?"),
+        content: const Text("Seluruh data akan dihapus"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("BATAL"),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                EasyLoading.show(
+                    status: "Loading...",
+                    dismissOnTap: false,
+                    maskType: EasyLoadingMaskType.black);
+                delete2(context);
+              },
+              child: const Text(
+                "HAPUS",
+                style: TextStyle(color: Colors.red),
+              ))
+        ],
+      ),
+    );
+  }
+
+  Future delete2(BuildContext context) async {
+    await _firestore.collection("pengumuman").doc(uid).delete().then((value) {
+      EasyLoading.dismiss();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    i: isPembina ? 1 : 0,
+                  )),
+          (route) => false);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Pengumuman telah dihapus'),
+      ),
+    );
   }
 }
