@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sku_pramuka/screen/extra/buat_pengumuman.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 
@@ -31,8 +28,8 @@ class PengumumanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 78, 108, 80),
-          title: Text("Pengumuman",
+          backgroundColor: const Color.fromARGB(255, 78, 108, 80),
+          title: const Text("Pengumuman",
               style: TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
           actions: [
@@ -68,7 +65,7 @@ class PengumumanPage extends StatelessWidget {
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 240, 235, 206),
@@ -85,21 +82,21 @@ class PengumumanPage extends StatelessWidget {
                 children: [
                   Text(
                     judul,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 26.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8.0,
                   ),
                   Text(
                     "$pembuat - $tanggal",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black54,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   foto == ""
@@ -113,7 +110,7 @@ class PengumumanPage extends StatelessWidget {
                         ),
                   foto == ""
                       ? Container()
-                      : SizedBox(
+                      : const SizedBox(
                           height: 20.0,
                         ),
                   Text(detil)

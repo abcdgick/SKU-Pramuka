@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
@@ -75,9 +73,9 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Profile",
           style: TextStyle(
             fontSize: 30,
@@ -110,7 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         kToolbarHeight -
                         kBottomNavigationBarHeight,
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
                     child: SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
@@ -167,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 } else {
-                  return LoadingPage();
+                  return const LoadingPage();
                 }
               }),
       bottomNavigationBar: BottomNavigationBar(
@@ -176,10 +175,10 @@ class _ProfilePageState extends State<ProfilePage> {
         currentIndex: 2,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: Color.fromARGB(255, 78, 108, 80),
+        selectedItemColor: const Color.fromARGB(255, 78, 108, 80),
         unselectedItemColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               size: 32,
@@ -190,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: Container(
               height: 52,
               width: 52,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
@@ -199,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.task,
                 size: 32,
                 color: Colors.white,
@@ -207,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             label: "Tugas",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_rounded,
               size: 32,
@@ -419,7 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             )
-          : SizedBox(),
+          : const SizedBox(),
     );
   }
 
@@ -429,10 +428,10 @@ class _ProfilePageState extends State<ProfilePage> {
       const Text("Daftar Sekolah",
           style: TextStyle(color: Colors.black, fontSize: 15)),
     );
-    widgetList.add(SizedBox(height: 10));
+    widgetList.add(const SizedBox(height: 10));
     for (var text in texts) {
       widgetList.add(unorderedListItem(text));
-      widgetList.add(SizedBox(
+      widgetList.add(const SizedBox(
         height: 5,
       ));
     }
@@ -444,7 +443,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text("• "),
+        const Text("• "),
         Expanded(
           child: Text(
             text,
@@ -471,7 +470,6 @@ class SaveImage extends StatelessWidget {
 
   File? imageFile;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -480,9 +478,9 @@ class SaveImage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Gambar Profile",
           style: TextStyle(
             fontSize: 30,
@@ -574,13 +572,13 @@ class SaveImage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],
@@ -611,7 +609,7 @@ class SaveImage extends StatelessWidget {
   }
 
   Future<bool> uploadImage() async {
-    String fileName = Uuid().v1();
+    String fileName = const Uuid().v1();
 
     var ref =
         FirebaseStorage.instance.ref().child('profiles').child("$fileName.jpg");

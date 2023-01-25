@@ -1,13 +1,6 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/extra/tugas_siswa.dart';
 import 'package:sku_pramuka/screen/extra/user_profile.dart';
-import 'package:sku_pramuka/screen/tugas_screen.dart';
-import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardSiswa extends StatelessWidget {
   final bool isAdmin;
@@ -28,12 +21,12 @@ class CardSiswa extends StatelessWidget {
     required this.sekolah,
     required this.profile,
   });
-  Color checkColor = Color.fromARGB(255, 170, 139, 86);
+  Color checkColor = const Color.fromARGB(255, 170, 139, 86);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       width: MediaQuery.of(context).size.width,
       child: Row(
         children: [
@@ -59,7 +52,7 @@ class CardSiswa extends StatelessWidget {
                   //color: Color.fromARGB(255, 247, 211, 132),
                   child: Container(
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Color.fromARGB(255, 247, 211, 132),
@@ -94,7 +87,7 @@ class CardSiswa extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Flexible(
@@ -107,7 +100,7 @@ class CardSiswa extends StatelessWidget {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       overflow: TextOverflow.fade)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Flexible(
@@ -117,7 +110,7 @@ class CardSiswa extends StatelessWidget {
                                       color: Colors.black, fontSize: 15),
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Flexible(

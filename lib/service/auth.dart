@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
 
 class AuthClass {
-  GoogleSignIn _googleSignIn = GoogleSignIn(
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',
@@ -48,7 +47,7 @@ class AuthClass {
       if (user != null || logged) {
         String profile = "";
         switch (gender) {
-          case "Laki-laki":
+          case "Laki-Laki":
             if (umur > 15)
               profile =
                   "https://firebasestorage.googleapis.com/v0/b/flutter-sku.appspot.com/o/profiles%2FDewasa%20Laki.png?alt=media&token=3858a66d-e588-4650-af33-b1cc10ac64a2";
@@ -81,12 +80,15 @@ class AuthClass {
         });
 
         await _firestore
-            .collection("admin")
-            .where("kecamatan", isEqualTo: kecamatan)
+            .collection("pembina")
+            .where("sekolah", arrayContains: sekolah)
             .get()
-            .then((value) => value.docs[0].reference.update({
-                  "siswabaru": FieldValue.arrayUnion([_auth.currentUser!.uid])
-                }));
+            .then((value) {
+          for (var doc in value.docs)
+            doc.reference.update({
+              "siswa": FieldValue.arrayUnion([_auth.currentUser!.uid])
+            });
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

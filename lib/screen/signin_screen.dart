@@ -1,11 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sku_pramuka/screen/home_screen.dart';
-import 'package:sku_pramuka/screen/signin_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 
@@ -22,7 +17,7 @@ class _SignInState extends State<SignIn> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   AuthClass authClass = AuthClass();
 
   bool _passwordVisible = false;
@@ -294,7 +289,7 @@ class _SignInState extends State<SignIn> {
         height: 70,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(colors: [
+          gradient: const LinearGradient(colors: [
             Color(0xfffd746c),
             Color(0xffff9068),
             Color(0xfffd746c)

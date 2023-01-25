@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
@@ -37,12 +35,12 @@ class CardTugas extends StatelessWidget {
       required this.kategori,
       required this.pembina});
 
-  Color checkColor = Color.fromARGB(255, 170, 139, 86);
+  Color checkColor = const Color.fromARGB(255, 170, 139, 86);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       width: MediaQuery.of(context).size.width,
       child: Row(
         children: [
@@ -98,20 +96,20 @@ class CardTugas extends StatelessWidget {
                               child: Center(
                                   child: Text(
                                 no.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18,
                                     letterSpacing: 1,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white),
                               ))),
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Flexible(
                             child: Text(
                               title,
                               overflow: TextOverflow.fade,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 18,
                                   letterSpacing: 1,
                                   fontWeight: FontWeight.w500,
@@ -186,33 +184,33 @@ class CardTugas extends StatelessWidget {
   List<Color> ambilWarna(String progress) {
     switch (progress) {
       case "belum":
-        checkColor = Color.fromARGB(255, 170, 139, 86);
+        checkColor = const Color.fromARGB(255, 170, 139, 86);
         return [
-          Color.fromARGB(255, 247, 211, 132),
-          Color.fromARGB(255, 255, 225, 156),
+          const Color.fromARGB(255, 247, 211, 132),
+          const Color.fromARGB(255, 255, 225, 156),
         ];
       case "proses":
-        checkColor = Color(0xff2664fa);
+        checkColor = const Color(0xff2664fa);
         return [
-          Color.fromARGB(255, 127, 164, 250),
-          Color.fromARGB(255, 147, 184, 250),
+          const Color.fromARGB(255, 127, 164, 250),
+          const Color.fromARGB(255, 147, 184, 250),
         ];
       case "ditolak":
-        checkColor = Color(0xFFFF6464);
+        checkColor = const Color(0xFFFF6464);
         return [
-          Color.fromARGB(255, 253, 125, 125),
-          Color.fromARGB(255, 255, 145, 145),
+          const Color.fromARGB(255, 253, 125, 125),
+          const Color.fromARGB(255, 255, 145, 145),
         ];
       case "diterima":
-        checkColor = Color(0xff00CBA9);
+        checkColor = const Color(0xff00CBA9);
         return [
-          Color.fromARGB(255, 147, 255, 139),
-          Color.fromARGB(255, 167, 255, 159),
+          const Color.fromARGB(255, 147, 255, 139),
+          const Color.fromARGB(255, 167, 255, 159),
         ];
       default:
         return [
-          Color.fromARGB(255, 247, 211, 132),
-          Color.fromARGB(255, 255, 225, 156),
+          const Color.fromARGB(255, 247, 211, 132),
+          const Color.fromARGB(255, 255, 225, 156),
         ];
     }
   }

@@ -28,8 +28,8 @@ class BuatPengumuman extends StatefulWidget {
 class _BuatPengumumanState extends State<BuatPengumuman> {
   TextEditingController judulCon = TextEditingController();
   TextEditingController detilCon = TextEditingController();
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String nama = "";
   String? selectedSekolah;
@@ -58,15 +58,15 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 78, 108, 80),
+          backgroundColor: const Color.fromARGB(255, 78, 108, 80),
           title: Text(edit ? "Edit Pengumuman" : "Buat Pengumuman",
-              style: TextStyle(color: Colors.white, fontSize: 24)),
+              style: const TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 240, 235, 206),
@@ -82,47 +82,47 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   text("Judul Pengumuman"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   input("Judul Pengumuman", judulCon, false),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   text("Gambar Pendukung"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   foto(),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   text("Detil Pengumuman"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   input("Detil Pengumuman", detilCon, true),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   text("Sekolah"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   fieldDropDownSekolah(),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   text("Urgensi Pengumuman"),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   fieldDropDownUrgensi(),
-                  SizedBox(
+                  const SizedBox(
                     height: 40.0,
                   ),
                   button(),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                 ],
@@ -158,7 +158,7 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
   Widget text(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 24.0,
         fontWeight: FontWeight.bold,
       ),
@@ -174,7 +174,7 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 17,
         ),
@@ -183,11 +183,11 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: Colors.grey,
             fontSize: 17,
           ),
-          contentPadding: EdgeInsets.only(
+          contentPadding: const EdgeInsets.only(
             left: 20,
             right: 20,
           ),
@@ -351,13 +351,13 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],
@@ -408,7 +408,7 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
             default:
           }
           if (file != null) {
-            String fileName = Uuid().v1();
+            String fileName = const Uuid().v1();
             var ref = FirebaseStorage.instance
                 .ref()
                 .child('pengumuman')
@@ -428,14 +428,14 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
             }).then((value) {
               EasyLoading.dismiss();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text("Pengumuman berhasil diupdate"),
                 ),
               );
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute<void>(
-                      builder: (BuildContext context) => HomePage(
+                      builder: (BuildContext context) => const HomePage(
                             i: 1,
                           )),
                   ModalRoute.withName('/'));
@@ -452,14 +452,14 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
             }).then((value) {
               EasyLoading.dismiss();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text("Pengumuman berhasil diubah"),
                 ),
               );
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute<void>(
-                      builder: (BuildContext context) => HomePage(
+                      builder: (BuildContext context) => const HomePage(
                             i: 1,
                           )),
                   ModalRoute.withName('/'));
@@ -479,14 +479,14 @@ class _BuatPengumumanState extends State<BuatPengumuman> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
               Color(0xff8a32f1),
               Color(0xffad32f9),
             ],
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Text(
             "Submit",
             style: TextStyle(
@@ -517,9 +517,9 @@ class ViewImage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Gambar Pengumuman",
           style: TextStyle(
             fontSize: 20,
@@ -538,14 +538,14 @@ class ViewImage extends StatelessWidget {
               if (source == null) return;
               if (await pickImage(source, context)) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text("Gambar berhasil diubah"),
                   ),
                 );
                 Navigator.pop(context);
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text("Gambar berhasil diubah"),
                 ),
               );
@@ -575,13 +575,13 @@ class ViewImage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],

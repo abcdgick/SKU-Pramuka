@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
@@ -88,9 +86,9 @@ class _UserProfileState extends State<UserProfile> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Profile",
           style: TextStyle(
             fontSize: 30,
@@ -111,7 +109,8 @@ class _UserProfileState extends State<UserProfile> {
                         kToolbarHeight -
                         kBottomNavigationBarHeight,
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
                     child: SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
@@ -170,7 +169,7 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   );
                 } else {
-                  return LoadingPage();
+                  return const LoadingPage();
                 }
               }),
     );
@@ -383,7 +382,7 @@ class _UserProfileState extends State<UserProfile> {
                 );
               },
             )
-          : SizedBox(),
+          : const SizedBox(),
     );
   }
 
@@ -393,10 +392,10 @@ class _UserProfileState extends State<UserProfile> {
       const Text("Daftar Sekolah",
           style: TextStyle(color: Colors.black, fontSize: 15)),
     );
-    widgetList.add(SizedBox(height: 10));
+    widgetList.add(const SizedBox(height: 10));
     for (var text in texts) {
       widgetList.add(unorderedListItem(text));
-      widgetList.add(SizedBox(
+      widgetList.add(const SizedBox(
         height: 5,
       ));
     }
@@ -408,7 +407,7 @@ class _UserProfileState extends State<UserProfile> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text("• "),
+        const Text("• "),
         Expanded(
           child: Text(
             text,
@@ -444,9 +443,9 @@ class SaveImage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Gambar Profile",
           style: TextStyle(
             fontSize: 30,
@@ -497,13 +496,13 @@ class SaveImage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],
@@ -534,7 +533,7 @@ class SaveImage extends StatelessWidget {
   }
 
   Future<bool> uploadImage() async {
-    String fileName = Uuid().v1();
+    String fileName = const Uuid().v1();
 
     var ref =
         FirebaseStorage.instance.ref().child('profiles').child("$fileName.jpg");

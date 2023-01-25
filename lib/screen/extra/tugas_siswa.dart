@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/extra/user_profile.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
@@ -17,8 +15,8 @@ class TugasSiswa extends StatefulWidget {
 }
 
 class _TugasSiswaState extends State<TugasSiswa> {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = false;
 
   List<String> kategori = [];
@@ -42,10 +40,10 @@ class _TugasSiswaState extends State<TugasSiswa> {
       appBar: AppBar(
         toolbarHeight: 70,
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         title: Text(
           "SKU ${widget.nama}",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -80,14 +78,14 @@ class _TugasSiswaState extends State<TugasSiswa> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15,
                     ),
                   ],
                 );
-              } else
+              } else {
                 return Row(
-                  children: [
+                  children: const [
                     CircleAvatar(
                       backgroundColor: Colors.black,
                     ),
@@ -96,6 +94,7 @@ class _TugasSiswaState extends State<TugasSiswa> {
                     ),
                   ],
                 );
+              }
             },
           ),
         ],
@@ -133,13 +132,13 @@ class _TugasSiswaState extends State<TugasSiswa> {
                         : Icons.edit,
                     iconColor: map['kategori'].contains("outdoor")
                         ? Colors.white
-                        : Color(0xFF395144),
+                        : const Color(0xFF395144),
                     iconBgColor: map['kategori'].contains("outdoor")
-                        ? Color(0xff00B8A9)
+                        ? const Color(0xff00B8A9)
                         : Colors.white,
                     check: check(map["uid"]),
                     kategori: kategori,
-                    pembina: {},
+                    pembina: const {},
                     uidSiswa: widget.uid,
                     namaSiswa: userMap["nama"],
                     uidPending: pending[map["uid"]],
@@ -151,7 +150,7 @@ class _TugasSiswaState extends State<TugasSiswa> {
               },
             );
           } else {
-            return LoadingPage();
+            return const LoadingPage();
           }
         },
       ),

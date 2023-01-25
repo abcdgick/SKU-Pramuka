@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/widgets/card_siswa.dart';
 
@@ -16,8 +14,8 @@ class ListSiswa extends StatefulWidget {
 }
 
 class _ListSiswaState extends State<ListSiswa> {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<dynamic> listSekolah = [];
   Map<String, String> mapSekolah = {};
@@ -41,8 +39,8 @@ class _ListSiswaState extends State<ListSiswa> {
       appBar: AppBar(
         toolbarHeight: 70,
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
-        title: Text(
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
+        title: const Text(
           "Daftar Siswa",
           style: TextStyle(
             fontSize: 28,
@@ -69,14 +67,14 @@ class _ListSiswaState extends State<ListSiswa> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15,
                     ),
                   ],
                 );
-              } else
+              } else {
                 return Row(
-                  children: [
+                  children: const [
                     CircleAvatar(
                       backgroundColor: Colors.black,
                     ),
@@ -85,12 +83,13 @@ class _ListSiswaState extends State<ListSiswa> {
                     ),
                   ],
                 );
+              }
             },
           ),
         ],
       ),
       body: _isLoading
-          ? LoadingPage()
+          ? const LoadingPage()
           : StreamBuilder<QuerySnapshot>(
               stream: _firestore
                   .collection('siswa')

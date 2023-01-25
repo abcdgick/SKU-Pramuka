@@ -38,8 +38,8 @@ class _HomePageState extends State<HomePage> {
   int? jumlahPending;
   bool _isLoading = true;
   AuthClass authClass = AuthClass();
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   List<Map<String, String>> listPengumuman = [{}];
   List<Widget> imageSliders = [];
   Map<String, dynamic>? listSiswa;
@@ -75,15 +75,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        shape: Border(
+        shape: const Border(
             bottom:
                 BorderSide(color: Color.fromARGB(255, 78, 108, 80), width: 0)),
         elevation: 0,
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         title: Text(
           DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -127,14 +127,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15,
                     ),
                   ],
                 );
               } else {
                 return Row(
-                  children: [
+                  children: const [
                     CircleAvatar(
                       backgroundColor: Colors.black,
                     ),
@@ -167,9 +167,10 @@ class _HomePageState extends State<HomePage> {
                             decoration: BoxDecoration(
                               border: Border.all(
                                   width: 0,
-                                  color: Color.fromARGB(255, 78, 108, 80)),
-                              color: Color.fromARGB(255, 78, 108, 80),
-                              borderRadius: BorderRadius.only(
+                                  color:
+                                      const Color.fromARGB(255, 78, 108, 80)),
+                              color: const Color.fromARGB(255, 78, 108, 80),
+                              borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.elliptical(300, 150)),
                             ),
                           ),
@@ -211,10 +212,10 @@ class _HomePageState extends State<HomePage> {
         currentIndex: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: Color.fromARGB(255, 78, 108, 80),
+        selectedItemColor: const Color.fromARGB(255, 78, 108, 80),
         unselectedItemColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               size: 32,
@@ -225,7 +226,7 @@ class _HomePageState extends State<HomePage> {
             icon: Container(
               height: 52,
               width: 52,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
@@ -234,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.task,
                 size: 32,
                 color: Colors.white,
@@ -242,7 +243,7 @@ class _HomePageState extends State<HomePage> {
             ),
             label: "Tugas",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_rounded,
               size: 32,
@@ -270,7 +271,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Pramuka.pancasila,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -286,7 +287,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
@@ -299,7 +300,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.star,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -315,7 +316,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
@@ -328,7 +329,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.menu_book,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -344,18 +345,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => KompasPage(),
+              builder: (context) => const KompasPage(),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.explore,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -383,7 +384,7 @@ class _HomePageState extends State<HomePage> {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListSiswa(
+              builder: (context) => const ListSiswa(
                 isAdmin: false,
                 siswaBaru: false,
               ),
@@ -392,7 +393,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.groups,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -408,18 +409,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BuatPengumuman(),
+              builder: (context) => const BuatPengumuman(),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.campaign,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -435,18 +436,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => KompasPage(),
+              builder: (context) => const KompasPage(),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.explore,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -474,7 +475,7 @@ class _HomePageState extends State<HomePage> {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListSiswa(
+              builder: (context) => const ListSiswa(
                 isAdmin: true,
                 siswaBaru: false,
               ),
@@ -483,7 +484,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.groups,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -499,18 +500,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListPembina(),
+              builder: (context) => const ListPembina(),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.star,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -526,18 +527,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         InkWell(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => KompasPage(),
+              builder: (context) => const KompasPage(),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: const [
               Icon(
                 Icons.explore,
                 color: Color.fromARGB(255, 92, 170, 97),
@@ -588,7 +589,7 @@ class _HomePageState extends State<HomePage> {
   void initCarousel() {
     imageSliders = listPengumuman
         .map((item) => Container(
-              margin: EdgeInsets.all(5.0),
+              margin: const EdgeInsets.all(5.0),
               child: InkWell(
                 onTap: () => Navigator.push(
                   context,
@@ -605,7 +606,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     child: Stack(
                       children: <Widget>[
                         item["foto"] == ""
@@ -628,7 +629,7 @@ class _HomePageState extends State<HomePage> {
                           left: 0.0,
                           right: 0.0,
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
                                   Color.fromARGB(200, 0, 0, 0),
@@ -638,11 +639,11 @@ class _HomePageState extends State<HomePage> {
                                 end: Alignment.topCenter,
                               ),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 20.0),
                             child: Text(
                               item["judul"]!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
@@ -715,23 +716,23 @@ class _HomePageState extends State<HomePage> {
     switch (tipe) {
       case "3":
         return [
-          Color.fromARGB(255, 127, 164, 250),
-          Color.fromARGB(255, 147, 184, 250),
+          const Color.fromARGB(255, 127, 164, 250),
+          const Color.fromARGB(255, 147, 184, 250),
         ];
       case "2":
         return [
-          Color.fromARGB(255, 247, 211, 132),
-          Color.fromARGB(255, 255, 225, 156),
+          const Color.fromARGB(255, 247, 211, 132),
+          const Color.fromARGB(255, 255, 225, 156),
         ];
       case "1":
         return [
-          Color.fromARGB(255, 253, 125, 125),
-          Color.fromARGB(255, 255, 145, 145),
+          const Color.fromARGB(255, 253, 125, 125),
+          const Color.fromARGB(255, 255, 145, 145),
         ];
       default:
         return [
-          Color.fromARGB(255, 247, 211, 132),
-          Color.fromARGB(255, 255, 225, 156),
+          const Color.fromARGB(255, 247, 211, 132),
+          const Color.fromARGB(255, 255, 225, 156),
         ];
     }
   }

@@ -1,11 +1,5 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
-import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
 class CardCek extends StatelessWidget {
   final int no;
@@ -32,12 +26,12 @@ class CardCek extends StatelessWidget {
       required this.iconBgColor,
       required this.kategori});
 
-  Color checkColor = Color.fromARGB(255, 170, 139, 86);
+  Color checkColor = const Color.fromARGB(255, 170, 139, 86);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
       width: MediaQuery.of(context).size.width,
       child: Row(
         children: [
@@ -72,7 +66,7 @@ class CardCek extends StatelessWidget {
                   //color: Color.fromARGB(255, 247, 211, 132),
                   child: Container(
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Color.fromARGB(255, 247, 211, 132),
@@ -95,13 +89,13 @@ class CardCek extends StatelessWidget {
                               child: Center(
                                   child: Text(
                                 no.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18,
                                     letterSpacing: 1,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white),
                               ))),
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Flexible(
@@ -114,7 +108,7 @@ class CardCek extends StatelessWidget {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       overflow: TextOverflow.fade)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Flexible(

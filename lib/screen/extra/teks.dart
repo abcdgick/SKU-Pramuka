@@ -1,9 +1,4 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class TeksPage extends StatelessWidget {
   final int index;
@@ -36,11 +31,11 @@ class TeksPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
         title: Text(
           konten[index]["judul"]!,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -52,7 +47,7 @@ class TeksPage extends StatelessWidget {
             kToolbarHeight -
             kBottomNavigationBarHeight,
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: SingleChildScrollView(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,10 +57,10 @@ class TeksPage extends StatelessWidget {
               width: 300,
               height: 200,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Text(
               konten[index]["isi"]!,
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
             )
           ],
         )),

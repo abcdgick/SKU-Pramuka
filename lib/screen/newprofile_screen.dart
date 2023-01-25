@@ -4,9 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:time_machine/time_machine.dart';
@@ -36,8 +33,8 @@ class _NewProfileState extends State<NewProfile> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController tingkat = TextEditingController();
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool _passwordVisible = false;
   bool _isLoading = false;
@@ -86,8 +83,8 @@ class _NewProfileState extends State<NewProfile> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 78, 108, 80),
-          title: Text("Data Diri",
+          backgroundColor: const Color.fromARGB(255, 78, 108, 80),
+          title: const Text("Data Diri",
               style: TextStyle(color: Colors.white, fontSize: 24)),
           centerTitle: true,
         ),

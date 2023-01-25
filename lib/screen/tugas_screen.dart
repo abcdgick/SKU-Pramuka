@@ -53,8 +53,8 @@ class _TugasPageState extends State<TugasPage> {
   bool proses = false;
   bool selesai = false;
   bool _isLoading = false;
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController isiText = TextEditingController();
   String? pengerjaan;
   String? oleh;
@@ -73,12 +73,12 @@ class _TugasPageState extends State<TugasPage> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? LoadingPage()
+        ? const LoadingPage()
         : Scaffold(
             appBar: AppBar(
-              backgroundColor: Color.fromARGB(255, 78, 108, 80),
+              backgroundColor: const Color.fromARGB(255, 78, 108, 80),
               title: Text("Tugas ${widget.no}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class _TugasPageState extends State<TugasPage> {
             body: Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     Color.fromARGB(255, 240, 235, 206),
@@ -100,7 +100,7 @@ class _TugasPageState extends State<TugasPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Padding(
@@ -111,45 +111,45 @@ class _TugasPageState extends State<TugasPage> {
                         children: [
                           Text(
                             widget.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 30,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 30),
+                          const SizedBox(height: 30),
                           label("Status"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           chipData(
                             widget.progress.toUpperCase(),
                             check(widget.progress),
                           ),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           widget.i == 0 ? siswaWidget1() : pembinaWidget1(),
                           label("Kategori"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Wrap(
                             runSpacing: 10,
                             children: [
                               chipData("Menyanyi", 0xffff6d6e),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               chipData("Gotong Royong", 0xfff29732),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               chipData("Menulis", 0xff6557ff),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               chipData("Outdoor", 0xff234ebd),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               chipData("Entah", 0xff2bc8d9),
                             ],
                           ),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           isFoto
                               ? label("Foto Pengerjaan")
                               : label("Text Jawaban"),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           isFoto ? foto() : text(),
                           widget.i == 0 ? siswaWidget2() : pembinaWidget2(),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -166,9 +166,9 @@ class _TugasPageState extends State<TugasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           label("Dikerjakan pada"),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           dilaksanakan(),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
         ],
       );
     } else {
@@ -181,11 +181,11 @@ class _TugasPageState extends State<TugasPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           label("Pembina"),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           cariPembina(),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           button()
         ],
       );
@@ -200,16 +200,16 @@ class _TugasPageState extends State<TugasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           label("Dikerjakan oleh"),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             "$oleh\npada $pengerjaan",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black54,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 25,
           )
         ],
@@ -223,9 +223,9 @@ class _TugasPageState extends State<TugasPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           buttonPembina(true),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           buttonPembina(false),
         ],
       );
@@ -236,7 +236,7 @@ class _TugasPageState extends State<TugasPage> {
   Widget label(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.black,
         fontWeight: FontWeight.w600,
         fontSize: 16.5,
@@ -254,11 +254,11 @@ class _TugasPageState extends State<TugasPage> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 17,
         ),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Nama Tugas",
           hintStyle: TextStyle(
@@ -284,13 +284,13 @@ class _TugasPageState extends State<TugasPage> {
       ),
       child: TextFormField(
         enabled: widget.i == 0,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 17,
         ),
         controller: isiText,
         maxLines: null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Deskripsi Tugas",
           hintStyle: TextStyle(
@@ -399,7 +399,7 @@ class _TugasPageState extends State<TugasPage> {
                   child: const Text('Ambil Gambar'),
                 ),
               )
-            : Center(
+            : const Center(
                 child: Text(
                   "Tidak ada gambar....",
                   style: TextStyle(fontSize: 18),
@@ -414,13 +414,13 @@ class _TugasPageState extends State<TugasPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],
@@ -455,13 +455,13 @@ class _TugasPageState extends State<TugasPage> {
       ),
       label: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 15,
           fontWeight: FontWeight.w600,
         ),
       ),
-      labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
     );
   }
 
@@ -473,7 +473,7 @@ class _TugasPageState extends State<TugasPage> {
             dismissOnTap: false,
             maskType: EasyLoadingMaskType.black);
         try {
-          String fileName = Uuid().v1();
+          String fileName = const Uuid().v1();
           String key = "";
           String value = "";
 
@@ -536,7 +536,7 @@ class _TugasPageState extends State<TugasPage> {
         } catch (e) {
           EasyLoading.dismiss();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("Kerjakan tugasnya dengan benar ya"),
             ),
           );
@@ -547,14 +547,14 @@ class _TugasPageState extends State<TugasPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
               Color(0xff8a32f1),
               Color(0xffad32f9),
             ],
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Text(
             "Submit",
             style: TextStyle(
@@ -602,14 +602,14 @@ class _TugasPageState extends State<TugasPage> {
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             colors: acc
-                ? [Color(0xFF1A2980), Color(0xFF26D0CE)]
-                : [Color(0xffeb3941), Color(0xffe2373f)],
+                ? [const Color(0xFF1A2980), const Color(0xFF26D0CE)]
+                : [const Color(0xffeb3941), const Color(0xffe2373f)],
           ),
         ),
         child: Center(
           child: Text(
             acc ? "Terima" : "Tolak",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -623,7 +623,7 @@ class _TugasPageState extends State<TugasPage> {
   Widget dilaksanakan() {
     return Text(
       "$pengerjaan - $pembina",
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.black54,
         fontWeight: FontWeight.bold,
         fontSize: 18,
@@ -732,9 +732,9 @@ class ViewImage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Gambar Tugas",
           style: TextStyle(
             fontSize: 24,
@@ -754,7 +754,7 @@ class ViewImage extends StatelessWidget {
                     if (source == null) return;
                     if (await pickImage(source, context)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text("Gambar berhasil diubah"),
                         ),
                       );
@@ -784,13 +784,13 @@ class ViewImage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text("Camera"),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Gallery"),
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],

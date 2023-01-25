@@ -43,7 +43,7 @@ class _Custom_CheckboxState extends State<Custom_Checkbox> {
           duration: const Duration(milliseconds: 500),
           curve: Curves.fastLinearToSlowEaseIn,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             color: isChecked
                 ? widget.backgroundColor ?? Colors.blue
                 : Colors.transparent,

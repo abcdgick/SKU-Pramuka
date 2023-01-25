@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/profile_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
-import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_cek.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
@@ -73,8 +69,8 @@ class _ListTugasState extends State<ListTugas> {
       appBar: AppBar(
         toolbarHeight: 70,
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
-        title: Text(
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
+        title: const Text(
           "SKU",
           style: TextStyle(
             fontSize: 28,
@@ -101,14 +97,14 @@ class _ListTugasState extends State<ListTugas> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15,
                     ),
                   ],
                 );
-              } else
+              } else {
                 return Row(
-                  children: [
+                  children: const [
                     CircleAvatar(
                       backgroundColor: Colors.black,
                     ),
@@ -117,6 +113,7 @@ class _ListTugasState extends State<ListTugas> {
                     ),
                   ],
                 );
+              }
             },
           ),
         ],
@@ -128,10 +125,10 @@ class _ListTugasState extends State<ListTugas> {
         currentIndex: 1,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: Color.fromARGB(255, 78, 108, 80),
+        selectedItemColor: const Color.fromARGB(255, 78, 108, 80),
         unselectedItemColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               size: 32,
@@ -142,7 +139,7 @@ class _ListTugasState extends State<ListTugas> {
             icon: Container(
               height: 52,
               width: 52,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
@@ -151,7 +148,7 @@ class _ListTugasState extends State<ListTugas> {
                   ],
                 ),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.task,
                 size: 32,
                 color: Colors.white,
@@ -159,7 +156,7 @@ class _ListTugasState extends State<ListTugas> {
             ),
             label: "Tugas",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_rounded,
               size: 32,
@@ -205,9 +202,9 @@ class _ListTugasState extends State<ListTugas> {
                       : Icons.edit,
                   iconColor: map['kategori'].contains("outdoor")
                       ? Colors.white
-                      : Color(0xFF395144),
+                      : const Color(0xFF395144),
                   iconBgColor: map['kategori'].contains("outdoor")
-                      ? Color(0xff00B8A9)
+                      ? const Color(0xff00B8A9)
                       : Colors.white,
                   check: check(map["uid"]),
                   kategori: kategori,
@@ -219,7 +216,7 @@ class _ListTugasState extends State<ListTugas> {
             },
           );
         } else {
-          return LoadingPage();
+          return const LoadingPage();
         }
       },
     );
@@ -253,15 +250,15 @@ class _ListTugasState extends State<ListTugas> {
                       : Icons.edit,
                   iconColor: tugasMap!['kategori'].contains("outdoor")
                       ? Colors.white
-                      : Color(0xFF395144),
+                      : const Color(0xFF395144),
                   iconBgColor: tugasMap!['kategori'].contains("outdoor")
-                      ? Color(0xff00B8A9)
+                      ? const Color(0xff00B8A9)
                       : Colors.white,
                   kategori: kategori);
             },
           );
         } else {
-          return LoadingPage();
+          return const LoadingPage();
         }
       },
     );
@@ -315,10 +312,11 @@ class _ListTugasState extends State<ListTugas> {
         .collection("pending")
         .get()
         .then((value) {
-      if (value.size == 0)
+      if (value.size == 0) {
         setState(() {
           _isLoading = false;
         });
+      }
       for (var doc in value.docs) {
         initPembina2(doc).then((value) {
           setState(() {

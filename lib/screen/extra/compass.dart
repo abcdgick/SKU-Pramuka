@@ -13,8 +13,6 @@ class KompasPage extends StatefulWidget {
 
 class _KompasPageState extends State<KompasPage> {
   bool _hasPermissions = false;
-  CompassEvent? _lastRead;
-  DateTime? _lastReadAt;
 
   @override
   void initState() {
@@ -29,9 +27,9 @@ class _KompasPageState extends State<KompasPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Color.fromARGB(255, 78, 108, 80),
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Kompas",
           style: TextStyle(
             fontSize: 30,
@@ -43,7 +41,7 @@ class _KompasPageState extends State<KompasPage> {
       body: Builder(builder: (context) {
         if (_hasPermissions) {
           return Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Column(
               children: <Widget>[
                 Expanded(child: _buildCompass()),
@@ -66,7 +64,7 @@ class _KompasPageState extends State<KompasPage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -75,19 +73,20 @@ class _KompasPageState extends State<KompasPage> {
 
         // if direction is null, then device does not support this sensor
         // show error message
-        if (direction == null)
-          return Center(
+        if (direction == null) {
+          return const Center(
             child: Text("Device does not have sensors !"),
           );
+        }
 
         return Material(
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           clipBehavior: Clip.antiAlias,
           elevation: 4.0,
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             alignment: Alignment.center,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
             child: Transform.rotate(
@@ -105,18 +104,19 @@ class _KompasPageState extends State<KompasPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Mohon Izinkan Penggunaan Data Lokasi Untuk Menggunakan Kompas'),
+          const Text(
+              'Mohon Izinkan Penggunaan Data Lokasi Untuk Menggunakan Kompas'),
           ElevatedButton(
-            child: Text('Tampilkan Menu Izin'),
+            child: const Text('Tampilkan Menu Izin'),
             onPressed: () {
               Permission.locationWhenInUse.request().then((ignored) {
                 _fetchPermissionStatus();
               });
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
-            child: Text('Buka Laman Pengaturan'),
+            child: const Text('Buka Laman Pengaturan'),
             onPressed: () {
               openAppSettings().then((opened) {
                 //
