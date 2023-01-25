@@ -21,7 +21,6 @@ final List<Widget> _children = [
   HomePage(i: index),
   ListTugas(i: index),
   ProfilePage(
-    isPembina: false,
     i: index,
   )
 ];

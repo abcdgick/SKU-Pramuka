@@ -22,15 +22,13 @@ final List<Widget> _children = [
   HomePage(i: index),
   ListTugas(i: index),
   ProfilePage(
-    isPembina: false,
     i: index,
   )
 ];
 
 class ProfilePage extends StatefulWidget {
   final int i;
-  final bool isPembina;
-  const ProfilePage({super.key, required this.isPembina, required this.i});
+  const ProfilePage({super.key, required this.i});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -54,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    tag = "dis";
     switch (widget.i) {
       case 0:
         init();
@@ -456,8 +455,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     );
   }
-
-  Future<void> ambilSekolah(List<String> listSekolah) async {}
 }
 
 class SaveImage extends StatelessWidget {

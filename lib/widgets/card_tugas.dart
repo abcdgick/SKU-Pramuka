@@ -8,6 +8,10 @@ class CardTugas extends StatelessWidget {
   final int i;
   final int no;
   final String uid;
+  String? uidSiswa;
+  String? namaSiswa;
+  String? sekolah;
+  String? uidPending;
   final String title;
   final IconData iconData;
   final Color iconColor;
@@ -21,6 +25,10 @@ class CardTugas extends StatelessWidget {
       required this.no,
       required this.i,
       required this.uid,
+      this.uidSiswa,
+      this.uidPending,
+      this.namaSiswa,
+      this.sekolah,
       required this.title,
       required this.iconData,
       required this.iconColor,
@@ -50,6 +58,10 @@ class CardTugas extends StatelessWidget {
                       title: title,
                       progress: check,
                       kategori: kategori,
+                      uidPending: uidPending,
+                      uidSiswa: uidSiswa,
+                      namaSiswa: namaSiswa,
+                      sekolah: sekolah,
                       pembina: check == "belum" || check == "ditolak"
                           ? pembina
                           : {}),

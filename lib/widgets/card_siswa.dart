@@ -4,34 +4,30 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:sku_pramuka/screen/extra/tugas_siswa.dart';
+import 'package:sku_pramuka/screen/extra/user_profile.dart';
 import 'package:sku_pramuka/screen/tugas_screen.dart';
 import 'package:sku_pramuka/widgets/custom_checkbox.dart';
 
-class CardCek extends StatelessWidget {
-  final int no;
-  final int i;
+class CardSiswa extends StatelessWidget {
+  final bool isAdmin;
   final String uid;
-  final Map<String, dynamic> siswa;
-  final Map<String, dynamic> tugas;
+  final String nama;
+  final String profile;
   final String sekolah;
-  final IconData iconData;
-  final Color iconColor;
-  final Color iconBgColor;
-  final List<String> kategori;
+  final String tingkat;
+  final String kecakapan;
 
-  CardCek(
-      {super.key,
-      required this.no,
-      required this.i,
-      required this.uid,
-      required this.siswa,
-      required this.tugas,
-      required this.sekolah,
-      required this.iconData,
-      required this.iconColor,
-      required this.iconBgColor,
-      required this.kategori});
-
+  CardSiswa({
+    super.key,
+    required this.uid,
+    required this.isAdmin,
+    required this.nama,
+    required this.tingkat,
+    required this.kecakapan,
+    required this.sekolah,
+    required this.profile,
+  });
   Color checkColor = Color.fromARGB(255, 170, 139, 86);
 
   @override
@@ -46,18 +42,9 @@ class CardCek extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TugasPage(
-                    no: no,
-                    i: i,
-                    uid: tugas["uid"],
-                    title: tugas["nama"],
-                    progress: "proses",
-                    kategori: kategori,
-                    pembina: const {},
-                    uidPending: uid,
-                    uidSiswa: siswa["uid"],
-                    namaSiswa: siswa["name"],
-                    sekolah: sekolah,
+                  builder: (context) => TugasSiswa(
+                    uid: uid,
+                    nama: nama,
                   ),
                 ),
               ),
@@ -85,22 +72,28 @@ class CardCek extends StatelessWidget {
                           vertical: 10.0, horizontal: 15.0),
                       child: Row(
                         children: [
-                          Container(
-                              height: 30,
-                              width: 33,
-                              decoration: BoxDecoration(
-                                color: Colors.blueAccent,
-                                borderRadius: BorderRadius.circular(8),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserProfile(
+                                  uid: uid,
+                                  db: "siswa",
+                                  edit: true,
+                                  admin: isAdmin,
+                                ),
                               ),
-                              child: Center(
-                                  child: Text(
-                                no.toString(),
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ))),
+                            ),
+                            child: ClipOval(
+                              child: SizedBox.fromSize(
+                                size: const Size.fromRadius(28),
+                                child: Image.network(
+                                  profile,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
                           SizedBox(
                             width: 15,
                           ),
@@ -108,7 +101,7 @@ class CardCek extends StatelessWidget {
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("${siswa['name']} - $sekolah",
+                              Text("$nama",
                                   style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -118,25 +111,24 @@ class CardCek extends StatelessWidget {
                                 height: 5,
                               ),
                               Flexible(
-                                child: Text(tugas["nama"],
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 15),
-                                    overflow: TextOverflow.fade),
+                                child: Text(
+                                  "$sekolah",
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 15),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  "$tingkat - $kecakapan",
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 15),
+                                ),
                               ),
                             ],
                           )),
-                          Container(
-                            height: 33,
-                            width: 36,
-                            decoration: BoxDecoration(
-                              color: iconBgColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              iconData,
-                              color: iconColor,
-                            ),
-                          ),
                         ],
                       ),
                     ),

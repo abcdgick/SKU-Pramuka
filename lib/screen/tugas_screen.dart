@@ -51,6 +51,7 @@ class _TugasPageState extends State<TugasPage> {
   List<String>? listPembina;
   bool isFoto = false;
   bool proses = false;
+  bool selesai = false;
   bool _isLoading = false;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -66,6 +67,7 @@ class _TugasPageState extends State<TugasPage> {
     widget.uidPending == null
         ? init(widget.progress, widget.pembina)
         : initReview(widget.progress);
+    file = null;
   }
 
   @override
@@ -193,36 +195,42 @@ class _TugasPageState extends State<TugasPage> {
   }
 
   Widget pembinaWidget1() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        label("Dikerjakan oleh"),
-        SizedBox(height: 12),
-        Text(
-          "$oleh\npada $pengerjaan",
-          style: TextStyle(
-            color: Colors.black54,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+    if (proses) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          label("Dikerjakan oleh"),
+          SizedBox(height: 12),
+          Text(
+            "$oleh\npada $pengerjaan",
+            style: TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
-        ),
-        SizedBox(
-          height: 25,
-        )
-      ],
-    );
+          SizedBox(
+            height: 25,
+          )
+        ],
+      );
+    } else
+      return Column();
   }
 
   Widget pembinaWidget2() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(height: 40),
-        buttonPembina(true),
-        SizedBox(height: 20),
-        buttonPembina(false),
-      ],
-    );
+    if (proses && !selesai) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 40),
+          buttonPembina(true),
+          SizedBox(height: 20),
+          buttonPembina(false),
+        ],
+      );
+    } else
+      return Column();
   }
 
   Widget label(String label) {
@@ -275,7 +283,7 @@ class _TugasPageState extends State<TugasPage> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextFormField(
-        enabled: !proses,
+        enabled: widget.i == 0,
         style: TextStyle(
           color: Colors.black,
           fontSize: 17,
@@ -375,21 +383,28 @@ class _TugasPageState extends State<TugasPage> {
                     ),
             ),
           )
-        : Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10))),
-              onPressed: () async {
-                final source = await showImageSource(context);
+        : widget.i == 0
+            ? Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () async {
+                    final source = await showImageSource(context);
 
-                if (source == null) return;
-                pickImage(source);
-              },
-              child: const Text('Ambil Gambar'),
-            ),
-          );
+                    if (source == null) return;
+                    pickImage(source);
+                  },
+                  child: const Text('Ambil Gambar'),
+                ),
+              )
+            : Center(
+                child: Text(
+                  "Tidak ada gambar....",
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
   }
 
   Future<ImageSource?> showImageSource(BuildContext context) {
@@ -575,8 +590,8 @@ class _TugasPageState extends State<TugasPage> {
             .then((value) => Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListTugas(
-                          i: widget.i,
+                    builder: (BuildContext context) => const ListTugas(
+                          i: 1,
                         )),
                 ModalRoute.withName('/')));
       },
@@ -620,11 +635,13 @@ class _TugasPageState extends State<TugasPage> {
     if (progress == "proses" || progress == "diterima") {
       setState(() {
         _isLoading = true;
+        oleh = "${widget.namaSiswa} - ${widget.sekolah}";
       });
       proses = true;
+      if (progress == "diterima") selesai = true;
       await _firestore
           .collection("siswa")
-          .doc(_auth.currentUser!.uid)
+          .doc(widget.uidSiswa ?? _auth.currentUser!.uid)
           .collection("progress")
           .where("tugas", isEqualTo: widget.uid)
           .get()
@@ -660,7 +677,7 @@ class _TugasPageState extends State<TugasPage> {
     setState(() {
       _isLoading = true;
     });
-    proses = true;
+    if (progress == "proses") proses = true;
     await _firestore
         .collection("pembina")
         .doc(_auth.currentUser!.uid)
