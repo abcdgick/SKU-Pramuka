@@ -15,6 +15,7 @@ class CardTugas extends StatelessWidget {
   final Color iconColor;
   final Color iconBgColor;
   final String check;
+  final String kec;
   final List<String> kategori;
   Map<String, String> pembina;
 
@@ -33,6 +34,7 @@ class CardTugas extends StatelessWidget {
       required this.iconBgColor,
       required this.check,
       required this.kategori,
+      required this.kec,
       required this.pembina});
 
   Color checkColor = const Color.fromARGB(255, 170, 139, 86);
@@ -60,6 +62,7 @@ class CardTugas extends StatelessWidget {
                       uidSiswa: uidSiswa,
                       namaSiswa: namaSiswa,
                       sekolah: sekolah,
+                      kec: kec,
                       pembina: check == "belum" || check == "ditolak"
                           ? pembina
                           : {}),

@@ -140,6 +140,7 @@ class _TugasSiswaState extends State<TugasSiswa> {
                     kategori: kategori,
                     pembina: const {},
                     uidSiswa: widget.uid,
+                    kec: userMap["kecakapan"].toString(),
                     namaSiswa: userMap["nama"],
                     uidPending: pending[map["uid"]],
                     sekolah: userMap["sekolah"],

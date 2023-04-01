@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/extra/buat_pengumuman.dart';
 import 'package:sku_pramuka/screen/extra/compass.dart';
-import 'package:sku_pramuka/screen/extra/list_pembina.dart';
+import 'package:sku_pramuka/screen/admin/list_pembina.dart';
 import 'package:sku_pramuka/screen/extra/list_siswa.dart';
 import 'package:sku_pramuka/screen/extra/pramuka_icons.dart';
 import 'package:sku_pramuka/screen/extra/teks.dart';
@@ -15,15 +15,13 @@ import 'package:sku_pramuka/screen/profile_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 
-int index = 0;
+// int index = 0;
 
-final List<Widget> _children = [
-  HomePage(i: index),
-  ListTugas(i: index),
-  ProfilePage(
-    i: index,
-  )
-];
+// final List<Widget> _children = [
+//   HomePage(i: index),
+//   ListTugas(i: index),
+//   ProfilePage(i: index)
+// ];
 
 class HomePage extends StatefulWidget {
   final int i;
@@ -49,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    index = widget.i;
+    // index = widget.i;
     switch (widget.i) {
       case 0:
         db = "siswa";
@@ -684,8 +682,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onTap(int index) {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => _children[index]));
+    //"kenapa pake switch case? kan lebih enak pake yang bawah?"
+    //GUA UDAH COBA DAN ERROR
+    switch (index) {
+      case 0:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => HomePage(i: widget.i),
+        ));
+        break;
+      case 1:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ListTugas(i: widget.i),
+        ));
+        break;
+      case 2:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ProfilePage(i: widget.i),
+        ));
+        break;
+      default:
+    }
+    // Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(builder: (context) => _children[index]));
   }
 
   Widget info() {

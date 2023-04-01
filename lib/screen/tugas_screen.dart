@@ -23,6 +23,7 @@ class TugasPage extends StatefulWidget {
   final List<String> kategori;
   final Map<String, String> pembina;
   final int no;
+  String? kec;
   String? uidPending;
   String? uidSiswa;
   String? namaSiswa;
@@ -36,6 +37,7 @@ class TugasPage extends StatefulWidget {
       required this.progress,
       required this.kategori,
       required this.pembina,
+      this.kec,
       this.uidPending,
       this.uidSiswa,
       this.namaSiswa,
@@ -143,13 +145,7 @@ class _TugasPageState extends State<TugasPage> {
                             ],
                           ),
                           const SizedBox(height: 25),
-                          isFoto
-                              ? label("Foto Pengerjaan")
-                              : label("Text Jawaban"),
-                          const SizedBox(height: 15),
-                          isFoto ? foto() : text(),
-                          widget.i == 0 ? siswaWidget2() : pembinaWidget2(),
-                          const SizedBox(height: 20),
+                          widget.kec != "Tamu" ? notTamu() : Container()
                         ],
                       ),
                     ),
@@ -158,6 +154,19 @@ class _TugasPageState extends State<TugasPage> {
               ),
             ),
           );
+  }
+
+  Widget notTamu() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        isFoto ? label("Foto Pengerjaan") : label("Text Jawaban"),
+        const SizedBox(height: 15),
+        isFoto ? foto() : text(),
+        widget.i == 0 ? siswaWidget2() : pembinaWidget2(),
+        const SizedBox(height: 20),
+      ],
+    );
   }
 
   Widget siswaWidget1() {

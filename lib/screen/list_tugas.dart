@@ -8,15 +8,13 @@ import 'package:sku_pramuka/service/auth.dart';
 import 'package:sku_pramuka/widgets/card_cek.dart';
 import 'package:sku_pramuka/widgets/card_tugas.dart';
 
-int index = 0;
+// int index = 0;
 
-final List<Widget> _children = [
-  HomePage(i: index),
-  ListTugas(i: index),
-  ProfilePage(
-    i: index,
-  )
-];
+// final List<Widget> _children = [
+//   HomePage(i: index),
+//   ListTugas(i: index),
+//   ProfilePage(i: index)
+// ];
 
 class ListTugas extends StatefulWidget {
   final int i;
@@ -47,7 +45,7 @@ class _ListTugasState extends State<ListTugas> {
     // TODO: implement initState
     super.initState();
     _isLoading = true;
-    index = widget.i;
+    //index = widget.i;
     switch (widget.i) {
       case 0:
         db = "siswa";
@@ -169,12 +167,23 @@ class _ListTugasState extends State<ListTugas> {
   }
 
   StreamBuilder<QuerySnapshot<Object?>> SiswaWidget() {
+    String tmpKec = userMap["kecakapan"].toString();
+    if (userMap["kecakapan"] == "Tamu") {
+      switch (userMap["tingkat"]) {
+        case "Penggalang":
+          tmpKec = "Ramu";
+          break;
+        case "Penegak":
+          tmpKec = "Bantara";
+          break;
+        default:
+      }
+    }
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection('tugas')
           .orderBy("no")
-          .where("kecakapan",
-              isEqualTo: userMap["kecakapan"].toString().toLowerCase())
+          .where("kecakapan", isEqualTo: tmpKec.toLowerCase())
           .where("tingkat",
               isEqualTo: userMap["tingkat"].toString().toLowerCase())
           .snapshots(),
@@ -208,6 +217,7 @@ class _ListTugasState extends State<ListTugas> {
                       : Colors.white,
                   check: check(map["uid"]),
                   kategori: kategori,
+                  kec: userMap["kecakapan"]!.toString(),
                   pembina: pembina,
                 );
               } else {
@@ -347,8 +357,26 @@ class _ListTugasState extends State<ListTugas> {
   }
 
   void onTap(int index) {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => _children[index]));
+    switch (index) {
+      case 0:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => HomePage(i: widget.i),
+        ));
+        break;
+      case 1:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ListTugas(i: widget.i),
+        ));
+        break;
+      case 2:
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ProfilePage(i: widget.i),
+        ));
+        break;
+      default:
+    }
+    // Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(builder: (context) => _children[index]));
   }
 
   String check(String uid) {

@@ -25,6 +25,7 @@ class NewProfile extends StatefulWidget {
 }
 
 class _NewProfileState extends State<NewProfile> {
+  bool coba = false;
   AuthClass authClass = AuthClass();
   final _formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
@@ -59,6 +60,7 @@ class _NewProfileState extends State<NewProfile> {
     "Buddha"
   ];
 
+  List<String> list = [];
   final lsiaga = <String>["Muda", "Bantu", "Tata"];
   final lpenggalang = <String>["Ramu", "Rakit", "Terap", "Garuda"];
   final lpenegak = <String>["Tamu", "Bantara", "Laksana"];
@@ -73,6 +75,7 @@ class _NewProfileState extends State<NewProfile> {
     email.text = widget.email;
     password.text = widget.pass;
     tingkat.text = kecakapan;
+    coba = false;
     init();
   }
 
@@ -95,6 +98,9 @@ class _NewProfileState extends State<NewProfile> {
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
+              autovalidateMode: coba
+                  ? AutovalidateMode.onUserInteraction
+                  : AutovalidateMode.disabled,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -239,7 +245,7 @@ class _NewProfileState extends State<NewProfile> {
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
                   color: Colors.deepOrange,
-                  width: 1.5,
+                  width: 1,
                 ),
                 borderRadius: BorderRadius.circular(15))),
         controller: controller,
@@ -288,6 +294,12 @@ class _NewProfileState extends State<NewProfile> {
                     icon: const Icon(Icons.clear)),
             labelText: "Email",
             labelStyle: const TextStyle(color: Colors.grey, fontSize: 17),
+            errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: Colors.redAccent,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(15)),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
                   color: Colors.grey,
@@ -527,23 +539,6 @@ class _NewProfileState extends State<NewProfile> {
   }
 
   Widget fieldDropDownTingkat(Icon icon, String label, String empty) {
-    List<String> list;
-    if (umur < 7) {
-      list = ["None"];
-      tingkat.text = "None";
-    } else if (umur < 11) {
-      list = lsiaga;
-      tingkat.text = "Siaga";
-    } else if (umur < 16) {
-      list = lpenggalang;
-      tingkat.text = "Penggalang";
-    } else if (umur < 21) {
-      list = lpenegak;
-      tingkat.text = "Penegak";
-    } else {
-      list = ["None"];
-    }
-    kecakapan = list[0];
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2 - 30,
       height: 60,
@@ -694,6 +689,22 @@ class _NewProfileState extends State<NewProfile> {
             setState(() {
               umur = diff.years;
               controller.text = formattedDate!;
+              if (umur < 7) {
+                list = ["None"];
+                tingkat.text = "None";
+              } else if (umur < 11) {
+                list = lsiaga;
+                tingkat.text = "Siaga";
+              } else if (umur < 16) {
+                list = lpenggalang;
+                tingkat.text = "Penggalang";
+              } else if (umur < 21) {
+                list = lpenegak;
+                tingkat.text = "Penegak";
+              } else {
+                list = ["None"];
+              }
+              kecakapan = list[0];
             });
           }
         },
@@ -774,6 +785,8 @@ class _NewProfileState extends State<NewProfile> {
               .then((value) => setState(() {
                     _isLoading = false;
                   }));
+        } else {
+          coba = true;
         }
       },
       child: Container(

@@ -101,29 +101,32 @@ class _KompasPageState extends State<KompasPage> {
 
   Widget _buildPermissionSheet() {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Text(
-              'Mohon Izinkan Penggunaan Data Lokasi Untuk Menggunakan Kompas'),
-          ElevatedButton(
-            child: const Text('Tampilkan Menu Izin'),
-            onPressed: () {
-              Permission.locationWhenInUse.request().then((ignored) {
-                _fetchPermissionStatus();
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            child: const Text('Buka Laman Pengaturan'),
-            onPressed: () {
-              openAppSettings().then((opened) {
-                //
-              });
-            },
-          )
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text(
+                'Mohon Izinkan Penggunaan Data Lokasi Untuk Menggunakan Kompas'),
+            ElevatedButton(
+              child: const Text('Tampilkan Menu Izin'),
+              onPressed: () {
+                Permission.locationWhenInUse.request().then((ignored) {
+                  _fetchPermissionStatus();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text('Buka Laman Pengaturan'),
+              onPressed: () {
+                openAppSettings().then((opened) {
+                  //
+                });
+              },
+            )
+          ],
+        ),
       ),
     );
   }

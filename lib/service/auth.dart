@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sku_pramuka/screen/admin/home_admin.dart';
 import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/newprofile_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -130,38 +131,46 @@ class AuthClass {
 
         try {
           int i = 0;
+          String db = "";
           UserCredential userCredential =
               await _auth.signInWithCredential(credential);
           storeCreds(userCredential, i);
-          QuerySnapshot query = await FirebaseFirestore.instance
-              .collection('siswa')
-              .where('email', isEqualTo: userCredential.user!.email!)
-              .get();
+          QuerySnapshot query;
 
-          if (query.docs.length == 0) {
-            i = 1;
+          do {
+            switch (i) {
+              case 0:
+                db = "siswa";
+                break;
+              case 1:
+                db = "pembina";
+                break;
+              case 2:
+                db = "admin";
+                break;
+            }
             query = await FirebaseFirestore.instance
-                .collection('pembina')
+                .collection(db)
                 .where('email', isEqualTo: userCredential.user!.email!)
                 .get();
-          }
+            i++;
+          } while (query.docs.isEmpty && i < 3);
 
-          if (query.docs.length == 0) {
-            i = 2;
-            query = await FirebaseFirestore.instance
-                .collection('admin')
-                .where('email', isEqualTo: userCredential.user!.email!)
-                .get();
-          }
-
-          if (query.docs.length != 0) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomePage(
-                          i: i,
-                        )),
-                (route) => false);
+          if (query.docs.isNotEmpty) {
+            if (db == "admin") {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeAdmin()),
+                  (route) => false);
+            } else {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            i: i,
+                          )),
+                  (route) => false);
+            }
           } else {
             Navigator.push(
                 context,
@@ -193,27 +202,32 @@ class AuthClass {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      int i = 0;
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('siswa')
-          .where('email', isEqualTo: userCredential.user!.email!)
-          .get();
+      print(email);
 
-      if (query.docs.isEmpty) {
-        i = 1;
+      int i = -1;
+      String db = "";
+      QuerySnapshot query;
+
+      do {
+        i++;
+        switch (i) {
+          case 0:
+            db = "siswa";
+            break;
+          case 1:
+            db = "pembina";
+            break;
+          case 2:
+            db = "admin";
+            break;
+        }
         query = await FirebaseFirestore.instance
-            .collection('pembina')
+            .collection(db)
             .where('email', isEqualTo: userCredential.user!.email!)
             .get();
-      }
+      } while (query.docs.isEmpty && i < 3);
 
-      if (query.docs.isEmpty) {
-        i = 2;
-        query = await FirebaseFirestore.instance
-            .collection('admin')
-            .where('email', isEqualTo: userCredential.user!.email!)
-            .get();
-      }
+      print("Dari auth: $i");
 
       Navigator.pushAndRemoveUntil(
           context,
@@ -263,8 +277,11 @@ class AuthClass {
           content: Text('Datang Kembali!'),
         ),
       );
-      await _auth.signOut().then((value) => Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => const SignIn()))));
+
+      await _auth.signOut().then((value) => Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SignIn()),
+          (route) => false));
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -279,6 +296,8 @@ class AuthClass {
       await _googleSignIn.signOut();
       await _auth.signOut();
       await storage.delete(key: "token");
+      await storage.delete(key: "userCredential");
+      await storage.delete(key: "name");
     } catch (e) {
       final snackBar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
