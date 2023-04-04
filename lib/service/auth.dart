@@ -227,15 +227,25 @@ class AuthClass {
             .get();
       } while (query.docs.isEmpty && i < 3);
 
-      print("Dari auth: $i");
-
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(
-                    i: i,
-                  )),
-          (route) => false);
+      switch (i) {
+        case 0:
+        case 1:
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        i: i,
+                      )),
+              (route) => false);
+          break;
+        case 2:
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomeAdmin()),
+              (route) => false);
+          break;
+        default:
+      }
     } catch (e) {
       final snackbar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);

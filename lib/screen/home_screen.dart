@@ -15,14 +15,6 @@ import 'package:sku_pramuka/screen/profile_screen.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/service/auth.dart';
 
-// int index = 0;
-
-// final List<Widget> _children = [
-//   HomePage(i: index),
-//   ListTugas(i: index),
-//   ProfilePage(i: index)
-// ];
-
 class HomePage extends StatefulWidget {
   final int i;
   const HomePage({super.key, required this.i});

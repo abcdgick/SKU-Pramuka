@@ -57,12 +57,8 @@ class _ProfilePageState extends State<ProfilePage> {
         db = "pembina";
         initPembina();
         break;
-      case 2:
-        db = "admin";
-        break;
       default:
     }
-    // index = widget.i;
   }
 
   @override

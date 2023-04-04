@@ -52,13 +52,7 @@ class _NewProfileState extends State<NewProfile> {
   List<String> listKota = [];
   List<String> listKecamatan = [];
   List<String> listSekolah = [];
-  List<String> listAgama = [
-    "Islam",
-    "Katolik",
-    "Prostestan",
-    "Hindu",
-    "Buddha"
-  ];
+  List<String> listAgama = ["Islam", "Katolik", "Protestan", "Hindu", "Buddha"];
 
   List<String> list = [];
   final lsiaga = <String>["Muda", "Bantu", "Tata"];

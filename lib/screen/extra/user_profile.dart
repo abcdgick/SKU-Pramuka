@@ -47,6 +47,7 @@ class _UserProfileState extends State<UserProfile> {
   String kecakapan = "None";
   int umur = -1;
   Map<String, dynamic> mapKota = {};
+  List<String> listKec = [];
   List<String> listKota = [];
   List<String> listKecamatan = [];
   List<String> listSekolah = [];
@@ -72,9 +73,6 @@ class _UserProfileState extends State<UserProfile> {
         break;
       case "pembina":
         initPembina();
-        break;
-      case "admin":
-        initAdmin();
         break;
       default:
     }
@@ -176,6 +174,9 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Column siswaWidget(AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+    widget.edit
+        ? getList(snapshot.data!['tingkat'], snapshot.data!['kecakapan'])
+        : null;
     return Column(
       children: [
         tile(
@@ -314,16 +315,30 @@ class _UserProfileState extends State<UserProfile> {
     });
   }
 
-  void initAdmin() async {}
+  void getList(String tingkat, String kec) async {
+    kecakapan = kec;
+    switch (tingkat) {
+      case "Siaga":
+        listKec = <String>["Muda", "Bantu", "Tata"];
+        break;
+      case "Penggalang":
+        listKec = <String>["Ramu", "Rakit", "Terap", "Garuda"];
+        break;
+      case "Penegak":
+        listKec = <String>["Tamu", "Bantara", "Laksana"];
+        break;
+      default:
+    }
+  }
 
-  void save(String dis) async {
+  void save(String a, String b) async {
     await _firestore
         .collection(widget.db)
         .doc(widget.uid)
-        .update({dis.toLowerCase(): textEditingController.text});
+        .update({a.toLowerCase(): b});
 
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('$dis updated successfully')));
+        .showSnackBar(SnackBar(content: Text('$a berhasil diubah')));
   }
 
   Widget tile(Icon dis, String title, String subs) {
@@ -336,7 +351,6 @@ class _UserProfileState extends State<UserProfile> {
             "Email",
             "Tanggal Lahir",
             "Tingkat",
-            "Kecakapan",
             "Nomor Gudep"
           ]
         : null;
@@ -355,34 +369,85 @@ class _UserProfileState extends State<UserProfile> {
               ),
               onPressed: () {
                 textEditingController.text = subs;
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("Edit $title"),
-                    content: TextFormField(
-                      controller: textEditingController,
-                      decoration: InputDecoration(hintText: title),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text("BATAL"),
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            if (textEditingController.text != subs &&
-                                textEditingController.text != "") save(title);
-                          },
-                          child: const Text("SIMPAN"))
-                    ],
-                  ),
-                );
+                switch (title) {
+                  case "Name":
+                    ubahNama(title, subs);
+                    break;
+                  case "Kecakapan":
+                    ubahKec();
+                    break;
+                  default:
+                }
               },
             )
           : const SizedBox(),
+    );
+  }
+
+  Future<dynamic> ubahNama(String title, String subs) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Edit $title"),
+        content: TextFormField(
+          controller: textEditingController,
+          decoration: InputDecoration(hintText: title),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("BATAL"),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (textEditingController.text != subs &&
+                    textEditingController.text != "")
+                  save(title, textEditingController.text);
+              },
+              child: const Text("SIMPAN"))
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> ubahKec() {
+    String tmpKec = kecakapan;
+    print(tmpKec);
+    print(listKec);
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Kecakapan"),
+        content: DropdownButtonFormField<String>(
+          value: tmpKec,
+          items: listKec.map((String value) {
+            return DropdownMenuItem<String>(value: value, child: Text(value));
+          }).toList(),
+          onChanged: (value) => setState(() {
+            tmpKec = value!;
+          }),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("BATAL"),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (kecakapan != tmpKec) {
+                  kecakapan = tmpKec;
+                  save("Kecakapan", kecakapan);
+                }
+              },
+              child: const Text("SIMPAN"))
+        ],
+      ),
     );
   }
 

@@ -1,14 +1,14 @@
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class ListPembina extends StatefulWidget {
-  const ListPembina({super.key});
+class ListSekolah extends StatefulWidget {
+  const ListSekolah({super.key});
 
   @override
-  State<ListPembina> createState() => _ListPembinaState();
+  State<ListSekolah> createState() => _ListSekolahState();
 }
 
-class _ListPembinaState extends State<ListPembina> {
+class _ListSekolahState extends State<ListSekolah> {
   @override
   Widget build(BuildContext context) {
     return Container();
