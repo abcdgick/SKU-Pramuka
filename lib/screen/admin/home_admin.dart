@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sku_pramuka/screen/admin/list_pembina.dart';
 import 'package:sku_pramuka/screen/admin/list_sekolah.dart';
 import 'package:sku_pramuka/screen/admin/settings.dart';
+import 'package:sku_pramuka/screen/admin/tambah_pembina.dart';
 import 'package:sku_pramuka/screen/extra/list_siswa.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 
@@ -16,8 +18,11 @@ class HomeAdmin extends StatefulWidget {
 }
 
 class _HomeAdminState extends State<HomeAdmin> {
-  List<Map<String, String>> listPengumuman = [{}];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late String kecamatan;
+  late String kota;
+  List<Map<String, String>> listPengumuman = [{}];
   Map<String, dynamic>? listSiswa;
   List<Widget> imageSliders = [];
   bool _isLoading = true;
@@ -133,7 +138,8 @@ class _HomeAdminState extends State<HomeAdmin> {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const ListPembina(),
+                                builder: (context) =>
+                                    ListPembina(kec: kecamatan, kota: kota),
                               ),
                             ),
                             child: Column(
@@ -197,7 +203,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                 color: Colors.white,
               ),
             ),
-            label: "Tugas",
+            label: "Tambah",
           ),
           const BottomNavigationBarItem(
             icon: Icon(
@@ -214,13 +220,20 @@ class _HomeAdminState extends State<HomeAdmin> {
   Future<void> initBaru() async {
     listPengumuman.clear();
     await _firestore
+        .collection("admin")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      kecamatan = value["kecamatan"];
+      kota = value["kota"];
+    });
+    await _firestore
         .collection("siswa")
         .where("baru", isEqualTo: true)
         .get()
         .then((value) {
       listPengumuman
           .add({"judul": "Terdapat ${value.size} siswa baru", "tipe": "2"});
-      print(listPengumuman);
       initCarousel();
     });
   }
@@ -234,7 +247,7 @@ class _HomeAdminState extends State<HomeAdmin> {
         break;
       case 1:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => ListSekolah(),
+          builder: (context) => TambahPembina(kecamatan: kecamatan, kota: kota),
         ));
         break;
       case 2:

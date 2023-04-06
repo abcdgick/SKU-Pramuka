@@ -12,6 +12,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool coba = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
@@ -27,6 +28,7 @@ class _SignInState extends State<SignIn> {
   void initState() {
     super.initState();
     _passwordVisible = false;
+    coba = false;
   }
 
   @override
@@ -40,81 +42,88 @@ class _SignInState extends State<SignIn> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Login",
-                style: TextStyle(
-                  fontSize: 35,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              googleButton(
-                  "assets/image/google.svg", "Masuk dengan Google", 25),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                "Atau",
-                style: TextStyle(color: Colors.black, fontSize: 18),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              textFormEmail(),
-              const SizedBox(
-                height: 20,
-              ),
-              textFormPass(),
-              const SizedBox(
-                height: 40,
-              ),
-              colorButton(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          child: Form(
+            key: _formKey,
+            autovalidateMode: coba
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 const Text(
-                  "Belum Punya Akun? ",
+                  "Login",
                   style: TextStyle(
+                    fontSize: 35,
                     color: Colors.black,
-                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (builder) => const SignUp()),
-                        (route) => false);
-                  },
-                  child: const Text(
-                    "Buat Akun",
+                const SizedBox(
+                  height: 20,
+                ),
+                googleButton(
+                    "assets/image/google.svg", "Masuk dengan Google", 25),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  "Atau",
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                textFormEmail(),
+                const SizedBox(
+                  height: 20,
+                ),
+                textFormPass(),
+                const SizedBox(
+                  height: 40,
+                ),
+                colorButton(),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  const Text(
+                    "Belum Punya Akun? ",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => const SignUp()),
+                          (route) => false);
+                    },
+                    child: const Text(
+                      "Buat Akun",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ]),
+                const SizedBox(
+                  height: 10,
                 ),
-              ]),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "Lupa Password?",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                const Text(
+                  "Lupa Password?",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ));
@@ -275,14 +284,21 @@ class _SignInState extends State<SignIn> {
   Widget colorButton() {
     return InkWell(
       onTap: () async {
-        setState(() {
-          _isLoading = true;
-        });
-        authClass
-            .emailSignIn(context, email.text, password.text)
-            .then((value) => setState(() {
-                  _isLoading = false;
-                }));
+        if (_formKey.currentState!.validate()) {
+          setState(() {
+            _isLoading = true;
+          });
+          setState(() {
+            _isLoading = true;
+          });
+          authClass
+              .emailSignIn(context, email.text, password.text)
+              .then((value) => setState(() {
+                    _isLoading = false;
+                  }));
+        } else {
+          coba = true;
+        }
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 100,

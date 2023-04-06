@@ -14,6 +14,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  bool coba = false;
   AuthClass authClass = AuthClass();
   final _formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
@@ -27,6 +28,7 @@ class _SignUpState extends State<SignUp> {
   void initState() {
     super.initState();
     _passwordVisible = false;
+    coba = false;
   }
 
   @override
@@ -42,6 +44,9 @@ class _SignUpState extends State<SignUp> {
           color: Colors.white,
           child: Form(
             key: _formKey,
+            autovalidateMode: coba
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -334,6 +339,8 @@ class _SignUpState extends State<SignUp> {
                         pass: password.text,
                         logged: false,
                       )));
+        } else {
+          coba = true;
         }
       },
       child: Container(

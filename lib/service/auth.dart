@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:sku_pramuka/screen/home_screen.dart';
 import 'package:sku_pramuka/screen/newprofile_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sku_pramuka/screen/signin_screen.dart';
+import 'package:random_password_generator/random_password_generator.dart';
 
 class AuthClass {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -19,6 +22,7 @@ class AuthClass {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final storage = new FlutterSecureStorage();
+  User? user;
 
   Future<void> emailSignUp(
       BuildContext context,
@@ -35,7 +39,6 @@ class AuthClass {
       String agama,
       String kecamatan) async {
     try {
-      User? user;
       if (!logged) {
         user = (await _auth.createUserWithEmailAndPassword(
                 email: email, password: password))
@@ -193,6 +196,35 @@ class AuthClass {
     } catch (e) {
       final snackbar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+  }
+
+  Future<String> pembinaSignUp(String nama, String email, String kecamatan,
+      String kota, List<String> sekolah) async {
+    final passwordGen = RandomPasswordGenerator();
+    String password = passwordGen.randomPassword(
+        letters: true,
+        numbers: true,
+        passwordLength: 8,
+        specialChar: false,
+        uppercase: false);
+    try {
+      user = (await _auth.createUserWithEmailAndPassword(
+              email: email, password: password))
+          .user;
+      await _firestore.collection('pembina').doc(_auth.currentUser!.uid).set({
+        "uid": user!.uid,
+        "name": nama,
+        "email": email,
+        "kecamatan": kecamatan,
+        "kota": kota,
+        "profile":
+            "https://firebasestorage.googleapis.com/v0/b/flutter-sku.appspot.com/o/profiles%2FDewasa%20Laki.png?alt=media&token=3858a66d-e588-4650-af33-b1cc10ac64a2",
+        "sekolah": sekolah
+      });
+      return "Email: ${email}\nPassword: ${password}";
+    } on FirebaseAuthException catch (e) {
+      return "${e.message}";
     }
   }
 

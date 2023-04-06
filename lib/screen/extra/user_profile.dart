@@ -18,12 +18,14 @@ class UserProfile extends StatefulWidget {
   final String uid;
   final bool edit;
   final bool admin;
-  const UserProfile(
+  String? kecamatan;
+  UserProfile(
       {super.key,
       required this.db,
       required this.uid,
       required this.edit,
-      required this.admin});
+      required this.admin,
+      this.kecamatan});
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -42,7 +44,6 @@ class _UserProfileState extends State<UserProfile> {
   String kecamatan = "";
   String sekolah = "";
   String gudep = "";
-  String uidSekolah = "";
   DateTime? tl;
   String kecakapan = "None";
   int umur = -1;
@@ -50,7 +51,8 @@ class _UserProfileState extends State<UserProfile> {
   List<String> listKec = [];
   List<String> listKota = [];
   List<String> listKecamatan = [];
-  List<String> listSekolah = [];
+  late List<Map<String, dynamic>> listSekolah;
+  late List<String> uidSekolah;
   List<String> listAgama = [
     "Islam",
     "Katolik",
@@ -298,17 +300,17 @@ class _UserProfileState extends State<UserProfile> {
     setState(() {
       _isLoading = true;
     });
-    List<String> tmp = [];
 
     _firestore.collection("pembina").doc(widget.uid).get().then((value) async {
-      tmp = (value.data()!["sekolah"] as List)
+      uidSekolah = (value.data()!["sekolah"] as List)
           .map((item) => item as String)
           .toList();
       sekolah = "";
-      for (var s in tmp) {
+      for (var s in uidSekolah) {
         await _firestore.collection("sekolah").doc(s).get().then(
             (value) => sekolah = "$sekolah•   ${value.data()!['nama']}\n");
       }
+
       setState(() {
         _isLoading = false;
       });
@@ -342,7 +344,13 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget tile(Icon dis, String title, String subs) {
-    List<String> nono = ["Email", "Tanggal Lahir", "Nomor Gudep"];
+    List<String> nono = [
+      "Email",
+      "Tanggal Lahir",
+      "Nomor Gudep",
+      "Kecamatan",
+      "Kota"
+    ];
     !widget.admin
         ? nono = [
             "Sekolah",
@@ -376,6 +384,10 @@ class _UserProfileState extends State<UserProfile> {
                   case "Kecakapan":
                     ubahKec();
                     break;
+                  case "Sekolah":
+                    ubahSekolah();
+                    break;
+
                   default:
                 }
               },
@@ -415,8 +427,6 @@ class _UserProfileState extends State<UserProfile> {
 
   Future<dynamic> ubahKec() {
     String tmpKec = kecakapan;
-    print(tmpKec);
-    print(listKec);
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -451,38 +461,107 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  Widget daftarSekolah(List<String> texts) {
-    var widgetList = <Widget>[];
-    widgetList.add(
-      const Text("Daftar Sekolah",
-          style: TextStyle(color: Colors.black, fontSize: 15)),
-    );
-    widgetList.add(const SizedBox(height: 10));
-    for (var text in texts) {
-      widgetList.add(unorderedListItem(text));
-      widgetList.add(const SizedBox(
-        height: 5,
-      ));
-    }
-
-    return Column(children: widgetList);
-  }
-
-  Widget unorderedListItem(String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text("• "),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-                color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+  Future<dynamic> ubahSekolah() async {
+    listSekolah = await _firestore
+        .collection("sekolah")
+        .where("kecamatan", isEqualTo: widget.kecamatan)
+        .get()
+        .then((value) =>
+            listSekolah = value.docs.map((doc) => doc.data()).toList());
+    print(widget.kecamatan);
+    print(listSekolah);
+    return showDialog(
+      context: context,
+      builder: (context) {
+        // List<String> tmp =
+        //     listSekolah.map((map) => map["nama"].toString()).toList();
+        return AlertDialog(
+          title: const Text('Edit Sekolah'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: listSekolah
+                      .map(
+                        (sekolah) => CheckboxListTile(
+                          title: Text(sekolah["nama"]),
+                          value: uidSekolah.contains(sekolah["uid"]),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value != null && value) {
+                                uidSekolah.add(sekolah["uid"]);
+                              } else {
+                                uidSekolah.remove(sekolah["uid"]);
+                              }
+                            });
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+              );
+            },
           ),
-        ),
-      ],
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("BATAL"),
+            ),
+            TextButton(
+                onPressed: () {
+                  simpanSekolah();
+                  Navigator.of(context).pop();
+                },
+                child: const Text("SIMPAN"))
+          ],
+        );
+      },
     );
   }
+
+  Future<void> simpanSekolah() async {
+    await _firestore
+        .collection("pembina")
+        .doc(widget.uid)
+        .update({"sekolah": uidSekolah});
+    initPembina();
+  }
+
+  // Widget daftarSekolah(List<String> texts) {
+  //   var widgetList = <Widget>[];
+  //   widgetList.add(
+  //     const Text("Daftar Sekolah",
+  //         style: TextStyle(color: Colors.black, fontSize: 15)),
+  //   );
+  //   widgetList.add(const SizedBox(height: 10));
+  //   for (var text in texts) {
+  //     widgetList.add(unorderedListItem(text));
+  //     widgetList.add(const SizedBox(
+  //       height: 5,
+  //     ));
+  //   }
+
+  //   return Column(children: widgetList);
+  // }
+
+  // Widget unorderedListItem(String text) {
+  //   return Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: <Widget>[
+  //       const Text("• "),
+  //       Expanded(
+  //         child: Text(
+  //           text,
+  //           style: const TextStyle(
+  //               color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 class SaveImage extends StatelessWidget {

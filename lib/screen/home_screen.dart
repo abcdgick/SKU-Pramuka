@@ -182,16 +182,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0,
-                        vertical: 30,
-                      ),
-                      child: widget.i == 0
-                          ? SiswaWidget(context)
-                          : widget.i == 1
-                              ? PembinaWidget(context)
-                              : AdminWidget(context),
-                    ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0,
+                          vertical: 30,
+                        ),
+                        child: widget.i == 0
+                            ? SiswaWidget(context)
+                            : PembinaWidget(context)),
                   ],
                 ),
               ),
@@ -418,97 +415,6 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 "Buat Pengumuman",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 30),
-        InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const KompasPage(),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.explore,
-                color: Color.fromARGB(255, 92, 170, 97),
-                size: 50,
-              ),
-              Text(
-                "Kompas",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Wrap AdminWidget(BuildContext context) {
-    return Wrap(
-      runSpacing: 30,
-      children: [
-        InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ListSiswa(
-                isAdmin: true,
-                siswaBaru: false,
-              ),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.groups,
-                color: Color.fromARGB(255, 92, 170, 97),
-                size: 50,
-              ),
-              Text(
-                "Daftar Siswa",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 30),
-        InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ListPembina(),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.star,
-                color: Color.fromARGB(255, 92, 170, 97),
-                size: 50,
-              ),
-              Text(
-                "Daftar Pembina",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
