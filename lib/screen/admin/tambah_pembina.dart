@@ -66,7 +66,7 @@ class _TambahPembinaState extends State<TambahPembina> {
                     height: 30,
                   ),
                   textFormBiasa(const Icon(Icons.person, color: Colors.grey),
-                      "Nama", "Isikan nama pembina", true, name),
+                      "Nama Pembina", "Isikan nama pembina", true, name),
                   const SizedBox(
                     height: 30,
                   ),
@@ -376,9 +376,10 @@ class _TambahPembinaState extends State<TambahPembina> {
         ),
         child: const Center(
           child: Text(
-            "Buat Akun",
+            "Simpan Pembina",
             style: TextStyle(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),

@@ -53,26 +53,26 @@ class _SignInState extends State<SignIn> {
                 const Text(
                   "Login",
                   style: TextStyle(
-                    fontSize: 35,
+                    fontSize: 40,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 40,
                 ),
-                googleButton(
-                    "assets/image/google.svg", "Masuk dengan Google", 25),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Atau",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                // googleButton(
+                //     "assets/image/google.svg", "Masuk dengan Google", 25),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const Text(
+                //   "Atau",
+                //   style: TextStyle(color: Colors.black, fontSize: 18),
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 textFormEmail(),
                 const SizedBox(
                   height: 20,
@@ -316,6 +316,7 @@ class _SignInState extends State<SignIn> {
             "Sign In",
             style: TextStyle(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),

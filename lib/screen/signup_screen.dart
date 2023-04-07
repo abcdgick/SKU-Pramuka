@@ -53,26 +53,26 @@ class _SignUpState extends State<SignUp> {
                 const Text(
                   "Buat Akun",
                   style: TextStyle(
-                    fontSize: 35,
+                    fontSize: 40,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 40,
                 ),
-                googleButton(
-                    "assets/image/google.svg", "Masuk dengan Google", 25),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Atau",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                // googleButton(
+                //     "assets/image/google.svg", "Masuk dengan Google", 25),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const Text(
+                //   "Atau",
+                //   style: TextStyle(color: Colors.black, fontSize: 18),
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 textFormBiasa(const Icon(Icons.person, color: Colors.grey),
                     "Nama", "Isikan Nama Anda", name),
                 const SizedBox(
@@ -359,6 +359,7 @@ class _SignUpState extends State<SignUp> {
             "Buat Akun",
             style: TextStyle(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),

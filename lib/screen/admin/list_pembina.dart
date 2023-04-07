@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sku_pramuka/screen/admin/tambah_pembina.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
 import 'package:sku_pramuka/widgets/card_pembina.dart';
@@ -18,7 +15,6 @@ class ListPembina extends StatefulWidget {
 
 class _ListPembinaState extends State<ListPembina> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<dynamic> listSekolah = [];
   Map<String, String> mapSekolah = {};
@@ -68,8 +64,8 @@ class _ListPembinaState extends State<ListPembina> {
           : StreamBuilder<QuerySnapshot>(
               stream: _firestore
                   .collection('pembina')
-                  .where("sekolah", arrayContainsAny: listSekolah)
-                  .orderBy("sekolah")
+                  .where("kecamatan", isEqualTo: widget.kec)
+                  .orderBy("name")
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -1,7 +1,10 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sku_pramuka/screen/admin/home_admin.dart';
@@ -199,6 +202,13 @@ class AuthClass {
     }
   }
 
+  String getRandom(int length) {
+    const ch = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz';
+    Random r = Random();
+    return String.fromCharCodes(
+        Iterable.generate(length, (_) => ch.codeUnitAt(r.nextInt(ch.length))));
+  }
+
   Future<String> pembinaSignUp(String nama, String email, String kecamatan,
       String kota, List<String> sekolah) async {
     final passwordGen = RandomPasswordGenerator();
@@ -208,12 +218,16 @@ class AuthClass {
         passwordLength: 8,
         specialChar: false,
         uppercase: false);
+    String appName = getRandom(10);
+    FirebaseApp tempApp = await Firebase.initializeApp(
+        name: appName, options: Firebase.app().options);
+    late UserCredential userCredential;
     try {
-      user = (await _auth.createUserWithEmailAndPassword(
-              email: email, password: password))
-          .user;
-      await _firestore.collection('pembina').doc(_auth.currentUser!.uid).set({
-        "uid": user!.uid,
+      userCredential = await FirebaseAuth.instanceFor(app: tempApp)
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      await _firestore.collection('pembina').doc(userCredential.user!.uid).set({
+        "uid": userCredential.user!.uid,
         "name": nama,
         "email": email,
         "kecamatan": kecamatan,
@@ -222,8 +236,10 @@ class AuthClass {
             "https://firebasestorage.googleapis.com/v0/b/flutter-sku.appspot.com/o/profiles%2FDewasa%20Laki.png?alt=media&token=3858a66d-e588-4650-af33-b1cc10ac64a2",
         "sekolah": sekolah
       });
+      await tempApp.delete();
       return "Email: ${email}\nPassword: ${password}";
     } on FirebaseAuthException catch (e) {
+      await tempApp.delete();
       return "${e.message}";
     }
   }
@@ -233,8 +249,6 @@ class AuthClass {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-
-      print(email);
 
       int i = -1;
       String db = "";

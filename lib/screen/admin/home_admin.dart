@@ -9,6 +9,7 @@ import 'package:sku_pramuka/screen/admin/settings.dart';
 import 'package:sku_pramuka/screen/admin/tambah_pembina.dart';
 import 'package:sku_pramuka/screen/extra/list_siswa.dart';
 import 'package:sku_pramuka/screen/signup_screen.dart';
+import 'package:sku_pramuka/service/auth.dart';
 
 class HomeAdmin extends StatefulWidget {
   const HomeAdmin({super.key});
@@ -20,6 +21,7 @@ class HomeAdmin extends StatefulWidget {
 class _HomeAdminState extends State<HomeAdmin> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthClass authClass = AuthClass();
   late String kecamatan;
   late String kota;
   List<Map<String, String>> listPengumuman = [{}];
@@ -42,20 +44,34 @@ class _HomeAdminState extends State<HomeAdmin> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          shape: const Border(
-              bottom: BorderSide(
-                  color: Color.fromARGB(255, 78, 108, 80), width: 0)),
-          elevation: 0,
-          toolbarHeight: 70,
-          backgroundColor: const Color.fromARGB(255, 78, 108, 80),
-          title: Text(
-            DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          )),
+        shape: const Border(
+            bottom:
+                BorderSide(color: Color.fromARGB(255, 78, 108, 80), width: 0)),
+        elevation: 0,
+        toolbarHeight: 70,
+        backgroundColor: const Color.fromARGB(255, 78, 108, 80),
+        title: Text(
+          DateFormat("EEEE, d MMMM", "id_ID").format(DateTime.now()),
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              authClass.signOutGoogle(context: context);
+              authClass.signOut(context);
+            },
+            color: Colors.redAccent,
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
+      ),
       body: _isLoading
           ? const LoadingPage()
           : SizedBox(
@@ -111,9 +127,10 @@ class _HomeAdminState extends State<HomeAdmin> {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const ListSekolah(),
+                                builder: (context) => ListSekolah(
+                                    kecamatan: kecamatan, kota: kota),
                               ),
-                            ),
+                            ).then((value) => initBaru()),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,7 +158,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                                 builder: (context) =>
                                     ListPembina(kec: kecamatan, kota: kota),
                               ),
-                            ),
+                            ).then((value) => initBaru()),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,57 +185,58 @@ class _HomeAdminState extends State<HomeAdmin> {
                 ),
               ),
             ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        onTap: onTap,
-        currentIndex: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: const Color.fromARGB(255, 78, 108, 80),
-        unselectedItemColor: Colors.grey,
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              size: 32,
-            ),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Container(
-              height: 52,
-              width: 52,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.indigoAccent,
-                    Colors.purple,
-                  ],
-                ),
-              ),
-              child: const Icon(
-                Icons.task,
-                size: 32,
-                color: Colors.white,
-              ),
-            ),
-            label: "Tambah",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(
-              Icons.account_circle_rounded,
-              size: 32,
-            ),
-            label: "Settings",
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: Colors.white,
+      //   onTap: onTap,
+      //   currentIndex: 0,
+      //   showSelectedLabels: false,
+      //   showUnselectedLabels: false,
+      //   selectedItemColor: const Color.fromARGB(255, 78, 108, 80),
+      //   unselectedItemColor: Colors.grey,
+      //   items: [
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(
+      //         Icons.home,
+      //         size: 32,
+      //       ),
+      //       label: "Home",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Container(
+      //         height: 52,
+      //         width: 52,
+      //         decoration: const BoxDecoration(
+      //           shape: BoxShape.circle,
+      //           gradient: LinearGradient(
+      //             colors: [
+      //               Colors.indigoAccent,
+      //               Colors.purple,
+      //             ],
+      //           ),
+      //         ),
+      //         child: const Icon(
+      //           Icons.task,
+      //           size: 32,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //       label: "Tambah",
+      //     ),
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(
+      //         Icons.account_circle_rounded,
+      //         size: 32,
+      //       ),
+      //       label: "Settings",
+      //     ),
+      //   ],
+      // ),
     );
   }
 
   Future<void> initBaru() async {
     listPengumuman.clear();
+    print(_auth.currentUser!.uid);
     await _firestore
         .collection("admin")
         .doc(_auth.currentUser!.uid)
@@ -228,13 +246,21 @@ class _HomeAdminState extends State<HomeAdmin> {
       kota = value["kota"];
     });
     await _firestore
-        .collection("siswa")
-        .where("baru", isEqualTo: true)
+        .collection("pembina")
+        .where("kecamatan", isEqualTo: kecamatan)
         .get()
         .then((value) {
       listPengumuman
-          .add({"judul": "Terdapat ${value.size} siswa baru", "tipe": "2"});
-      initCarousel();
+          .add({"judul": "Terdapat total ${value.size} pembina", "tipe": "3"});
+      _firestore
+          .collection("sekolah")
+          .where("kecamatan", isEqualTo: kecamatan)
+          .get()
+          .then((value2) {
+        listPengumuman.add(
+            {"judul": "Terdapat total ${value2.size} sekolah", "tipe": "3"});
+        initCarousel();
+      });
     });
   }
 

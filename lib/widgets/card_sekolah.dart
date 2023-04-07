@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:sku_pramuka/screen/admin/profile_sekolah.dart';
 import 'package:sku_pramuka/screen/extra/tugas_siswa.dart';
 import 'package:sku_pramuka/screen/extra/user_profile.dart';
 
-class CardPembina extends StatelessWidget {
+class CardSekolah extends StatelessWidget {
   final String uid;
   final String nama;
-  final String profile;
-  final String email;
-  final String kecamatan;
+  final String gudepPutra;
+  final String gudepPutri;
 
-  CardPembina(
-      {super.key,
-      required this.uid,
-      required this.nama,
-      required this.email,
-      required this.profile,
-      required this.kecamatan});
+  CardSekolah({
+    super.key,
+    required this.uid,
+    required this.nama,
+    required this.gudepPutra,
+    required this.gudepPutri,
+  });
   Color checkColor = const Color.fromARGB(255, 170, 139, 86);
 
   @override
@@ -30,17 +30,10 @@ class CardPembina extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UserProfile(
-                    uid: uid,
-                    db: "pembina",
-                    edit: true,
-                    admin: true,
-                    kecamatan: kecamatan,
-                  ),
-                ),
+                    builder: (context) => ProfileSekolah(uid: uid)),
               ),
               child: SizedBox(
-                height: 100,
+                height: 85,
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -60,21 +53,9 @@ class CardPembina extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 15.0),
+                          vertical: 10.0, horizontal: 30.0),
                       child: Row(
                         children: [
-                          ClipOval(
-                            child: SizedBox.fromSize(
-                              size: const Size.fromRadius(28),
-                              child: Image.network(
-                                profile,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 15,
-                          ),
                           Flexible(
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,15 +67,25 @@ class CardPembina extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       overflow: TextOverflow.fade)),
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Flexible(
                                 child: Text(
-                                  email,
+                                  "Putra: $gudepPutra\t\t\tPutri: $gudepPutri",
                                   style: const TextStyle(
                                       color: Colors.black, fontSize: 16),
                                 ),
                               ),
+                              // const SizedBox(
+                              //   height: 10,
+                              // ),
+                              // Flexible(
+                              //   child: Text(
+                              //     "",
+                              //     style: const TextStyle(
+                              //         color: Colors.black, fontSize: 14),
+                              //   ),
+                              // ),
                             ],
                           )),
                         ],
