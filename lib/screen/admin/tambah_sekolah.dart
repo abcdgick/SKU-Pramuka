@@ -184,7 +184,7 @@ class _TambahSekolahState extends State<TambahSekolah> {
         inputFormatters: [
           gudep
               ? FilteringTextInputFormatter.allow(RegExp("[0-9- ]+"))
-              : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z- ]+"))
+              : FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9- ]+"))
         ],
         decoration: InputDecoration(
             filled: true,
